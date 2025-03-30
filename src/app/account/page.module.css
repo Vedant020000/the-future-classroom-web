@@ -1,0 +1,586 @@
+.page {
+    min-height: 100vh;
+    background-color: rgb(0, 0, 0);
+}
+
+.headerSection {
+    background-color: rgb(10, 10, 10);
+    padding: 3rem 0 2rem;
+    margin-top: 4rem;
+}
+
+.container {
+    width: 100%;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+}
+
+.headerContent {
+    width: 100%;
+}
+
+.profileLayout {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+@media (min-width: 640px) {
+    .profileLayout {
+        flex-direction: row;
+        align-items: center;
+    }
+}
+
+.avatar {
+    width: 6rem;
+    height: 6rem;
+    border-radius: 9999px;
+    background: linear-gradient(to bottom right, rgb(var(--primary-rgb)), rgb(var(--secondary-rgb)));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: 600;
+    color: white;
+}
+
+.userInfo {
+    flex: 1;
+}
+
+@media (min-width: 640px) {
+    .userInfo {
+        padding-left: 1rem;
+    }
+}
+
+.userName {
+    font-size: 1.875rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+}
+
+.userRole {
+    font-size: 1.125rem;
+    color: rgba(var(--foreground-rgb), 0.8);
+    margin-bottom: 0.5rem;
+}
+
+.userEmail {
+    font-size: 1rem;
+    color: rgba(var(--foreground-rgb), 0.7);
+    margin-bottom: 1rem;
+}
+
+.badgeContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+}
+
+.planBadge {
+    padding: 0.25rem 0.75rem;
+    background-color: rgba(var(--primary-rgb), 0.2);
+    color: rgb(var(--primary-rgb));
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.upgradeBadge {
+    padding: 0.25rem 0.75rem;
+    background-color: rgba(255, 0, 110, 0.1);
+    color: var(--accent, #ff006e);
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    transition: background-color 0.2s;
+}
+
+.upgradeBadge:hover {
+    background-color: rgba(255, 0, 110, 0.2);
+}
+
+.mainSection {
+    padding: 2.5rem 0;
+}
+
+.content {
+    max-width: 64rem;
+    margin: 0 auto;
+}
+
+.tabsContainer {
+    display: flex;
+    border-bottom: 1px solid rgba(229, 229, 229, 0.4);
+    margin-bottom: 2rem;
+}
+
+.tabButton {
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.7);
+    transition: color 0.2s;
+}
+
+.tabButton:hover {
+    color: var(--primary, #3a86ff);
+}
+
+.activeTab {
+    color: var(--primary, #3a86ff);
+    border-bottom: 2px solid var(--primary, #3a86ff);
+}
+
+.sectionTitle {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+}
+
+.statsGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+}
+
+@media (min-width: 768px) {
+    .statsGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.statsCard {
+    background-color: #f7f7f7;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    border: 1px solid rgba(229, 229, 229, 0.4);
+}
+
+.statsHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.statsTitle {
+    font-size: 1.125rem;
+    font-weight: 600;
+}
+
+.statsSubtitle {
+    font-size: 0.875rem;
+    color: rgba(0, 0, 0, 0.7);
+}
+
+.statsValue {
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.progressBar {
+    width: 100%;
+    height: 0.75rem;
+    background-color: rgba(229, 229, 229, 0.3);
+    border-radius: 9999px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+}
+
+.progressFill {
+    height: 100%;
+    border-radius: 9999px;
+}
+
+.primaryFill {
+    background-color: var(--primary, #3a86ff);
+}
+
+.accentFill {
+    background-color: var(--accent, #ff006e);
+}
+
+.progressLabels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.875rem;
+    color: rgba(0, 0, 0, 0.7);
+}
+
+.sectionHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.viewAllLink {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--primary, #3a86ff);
+}
+
+.viewAllLink:hover {
+    text-decoration: underline;
+}
+
+.tableContainer {
+    background-color: #f7f7f7;
+    border-radius: 0.75rem;
+    border: 1px solid rgba(229, 229, 229, 0.4);
+    overflow: hidden;
+}
+
+.table {
+    width: 100%;
+}
+
+.tableHeader {
+    background-color: rgba(247, 247, 247, 0.5);
+    border-bottom: 1px solid rgba(229, 229, 229, 0.4);
+}
+
+.tableHeaderCell {
+    text-align: left;
+    padding: 0.75rem 1rem;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.7);
+}
+
+.tableRow {
+    border-bottom: 1px solid rgba(229, 229, 229, 0.4);
+}
+
+.tableRow:last-child {
+    border-bottom: none;
+}
+
+.tableRow:hover {
+    background-color: rgba(247, 247, 247, 0.5);
+}
+
+.tableCell {
+    padding: 0.75rem 1rem;
+}
+
+.upgradeSection {
+    margin-top: 3rem;
+}
+
+.upgradeCard {
+    background: linear-gradient(to right, rgba(58, 134, 255, 0.1), rgba(131, 56, 236, 0.1), rgba(255, 0, 110, 0.1));
+    border-radius: 0.75rem;
+    padding: 2rem;
+}
+
+.upgradeTitle {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.upgradeDescription {
+    color: rgba(0, 0, 0, 0.8);
+    margin-bottom: 1.5rem;
+    max-width: 42rem;
+}
+
+.planGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+    .planGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.planCard {
+    background-color: rgba(247, 247, 247, 0.8);
+    backdrop-filter: blur(4px);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    border: 1px solid rgba(229, 229, 229, 0.4);
+}
+
+.planHeader {
+    margin-bottom: 1rem;
+}
+
+.planName {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.planPrice {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-top: 0.5rem;
+}
+
+.pricePeriod {
+    font-size: 0.875rem;
+    color: rgba(0, 0, 0, 0.6);
+}
+
+.featuresList {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.featureItem {
+    display: flex;
+    align-items: flex-start;
+}
+
+.featureIcon {
+    width: 1.25rem;
+    height: 1.25rem;
+    color: var(--primary, #3a86ff);
+    margin-right: 0.5rem;
+    margin-top: 0.125rem;
+}
+
+.primaryButton {
+    width: 100%;
+    padding: 0.75rem 1.5rem;
+    border-radius: 9999px;
+    background: linear-gradient(to right, var(--accent, #ff006e), var(--primary, #3a86ff));
+    color: white;
+    font-weight: 500;
+    text-align: center;
+}
+
+/* Templates Tab */
+.templatesList {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+@media (min-width: 768px) {
+    .templatesList {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .templatesList {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.templateCard {
+    background-color: #f7f7f7;
+    border: 1px solid rgba(229, 229, 229, 0.4);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    position: relative;
+}
+
+.templateName {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.templateTool {
+    font-size: 0.875rem;
+    color: var(--primary, #3a86ff);
+    margin-bottom: 1rem;
+}
+
+.templateDate {
+    font-size: 0.875rem;
+    color: rgba(0, 0, 0, 0.6);
+}
+
+.templateActions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1.5rem;
+}
+
+.templateActionButton {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+.useButton {
+    background-color: rgba(58, 134, 255, 0.1);
+    color: var(--primary, #3a86ff);
+}
+
+.useButton:hover {
+    background-color: rgba(58, 134, 255, 0.2);
+}
+
+.deleteButton {
+    background-color: rgba(255, 0, 110, 0.1);
+    color: var(--accent, #ff006e);
+}
+
+.deleteButton:hover {
+    background-color: rgba(255, 0, 110, 0.2);
+}
+
+/* Settings Tab */
+.formGroup {
+    margin-bottom: 1.5rem;
+}
+
+.formLabel {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.formInput {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid rgba(229, 229, 229, 0.8);
+    border-radius: 0.5rem;
+    background-color: white;
+}
+
+.formSection {
+    margin-bottom: 2.5rem;
+}
+
+.formSubtitle {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+}
+
+.checkboxGroup {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.checkboxInput {
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+.buttonGroup {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.saveButton {
+    padding: 0.75rem 1.5rem;
+    border-radius: 9999px;
+    background: linear-gradient(to right, var(--accent, #ff006e), var(--primary, #3a86ff));
+    color: white;
+    font-weight: 500;
+}
+
+.cancelButton {
+    padding: 0.75rem 1.5rem;
+    border-radius: 9999px;
+    border: 1px solid rgba(229, 229, 229, 0.8);
+    color: rgba(0, 0, 0, 0.7);
+}
+
+/* Billing Tab */
+.billingInfo {
+    background-color: #f7f7f7;
+    border: 1px solid rgba(229, 229, 229, 0.4);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    margin-bottom: 2.5rem;
+}
+
+.billingRow {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid rgba(229, 229, 229, 0.4);
+}
+
+.billingRow:last-child {
+    border-bottom: none;
+}
+
+.billingLabel {
+    font-weight: 500;
+}
+
+.paymentMethod {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    border: 1px solid rgba(229, 229, 229, 0.8);
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.paymentIcon {
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(58, 134, 255, 0.1);
+    border-radius: 0.5rem;
+    color: var(--primary, #3a86ff);
+}
+
+.paymentDetails {
+    flex: 1;
+}
+
+.paymentName {
+    font-weight: 500;
+}
+
+.paymentExpiry {
+    font-size: 0.875rem;
+    color: rgba(0, 0, 0, 0.6);
+}
+
+.paymentDefault {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    background-color: rgba(58, 134, 255, 0.1);
+    color: var(--primary, #3a86ff);
+    border-radius: 9999px;
+}
+
+.addPaymentButton {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    border: 1px dashed rgba(229, 229, 229, 0.8);
+    color: var(--primary, #3a86ff);
+    font-weight: 500;
+    background-color: rgba(58, 134, 255, 0.05);
+    transition: background-color 0.2s;
+}
+
+.addPaymentButton:hover {
+    background-color: rgba(58, 134, 255, 0.1);
+}
+
+.addIcon {
+    width: 1.25rem;
+    height: 1.25rem;
+}
