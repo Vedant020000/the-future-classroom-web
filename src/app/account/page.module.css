@@ -20,6 +20,30 @@
     width: 100%;
 }
 
+.loadingContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 80vh;
+    gap: 1.5rem;
+}
+
+.spinner {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    border: 3px solid rgba(var(--primary-rgb), 0.2);
+    border-top-color: rgb(var(--primary-rgb));
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
 .profileLayout {
     display: flex;
     flex-direction: column;
@@ -45,6 +69,13 @@
     font-size: 2rem;
     font-weight: 600;
     color: white;
+    overflow: hidden;
+}
+
+.avatarImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .userInfo {
@@ -583,4 +614,314 @@
 .addIcon {
     width: 1.25rem;
     height: 1.25rem;
+}
+
+/* Tabs */
+.tabContainer {
+    margin-top: 2rem;
+    margin-bottom: 3rem;
+}
+
+.tabs {
+    display: flex;
+    overflow-x: auto;
+    border-bottom: 1px solid rgba(var(--border-rgb), 0.2);
+    margin-bottom: 2rem;
+}
+
+.tabButton {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 500;
+    color: rgba(var(--foreground-rgb), 0.7);
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.tabButton:hover {
+    color: rgba(var(--foreground-rgb), 0.9);
+}
+
+.activeTab {
+    color: rgb(var(--primary-rgb));
+    border-bottom-color: rgb(var(--primary-rgb));
+}
+
+.tabContent {
+    padding: 1rem 0;
+}
+
+/* Stats Cards */
+.statsSection {
+    margin-bottom: 2.5rem;
+}
+
+.sectionTitle {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: rgba(var(--foreground-rgb), 0.9);
+}
+
+.statsGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+}
+
+@media (min-width: 640px) {
+    .statsGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.statsCard {
+    background-color: rgb(18, 18, 18);
+    border-radius: 0.75rem;
+    border: 1px solid rgba(var(--border-rgb), 0.2);
+    padding: 1.5rem;
+}
+
+.statsHeader {
+    margin-bottom: 1.25rem;
+}
+
+.statsTitle {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.statsSubtitle {
+    font-size: 0.875rem;
+    color: rgba(var(--foreground-rgb), 0.6);
+}
+
+.statsValue {
+    font-size: 1.875rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.progressBar {
+    width: 100%;
+    height: 0.5rem;
+    background-color: rgba(var(--border-rgb), 0.2);
+    border-radius: 9999px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+}
+
+.progressFill {
+    height: 100%;
+    border-radius: 9999px;
+}
+
+.primaryFill {
+    background-color: rgb(var(--primary-rgb));
+}
+
+.accentFill {
+    background-color: rgb(var(--accent-rgb));
+}
+
+.progressLabels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: rgba(var(--foreground-rgb), 0.6);
+}
+
+/* Info Section */
+.infoSection {
+    margin-bottom: 2.5rem;
+}
+
+.infoCard {
+    background-color: rgb(18, 18, 18);
+    border-radius: 0.75rem;
+    border: 1px solid rgba(var(--border-rgb), 0.2);
+    padding: 1.5rem;
+}
+
+.infoParagraph {
+    line-height: 1.6;
+    margin-bottom: 1.25rem;
+    color: rgba(var(--foreground-rgb), 0.8);
+}
+
+.buttonContainer {
+    margin-top: 1.5rem;
+}
+
+.primaryButton {
+    background: linear-gradient(to right, rgb(var(--primary-rgb)), rgb(var(--secondary-rgb)));
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.375rem;
+    font-weight: 500;
+    transition: all 0.2s;
+    border: none;
+    cursor: pointer;
+}
+
+.primaryButton:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.primaryButton:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Profile Form */
+.profileForm {
+    background-color: rgb(18, 18, 18);
+    border-radius: 0.75rem;
+    border: 1px solid rgba(var(--border-rgb), 0.2);
+    padding: 1.5rem;
+    max-width: 40rem;
+}
+
+.formGroup {
+    margin-bottom: 1.5rem;
+}
+
+.formLabel {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: rgba(var(--foreground-rgb), 0.9);
+}
+
+.formInput {
+    width: 100%;
+    padding: 0.75rem;
+    border-radius: 0.375rem;
+    border: 1px solid rgba(var(--border-rgb), 0.5);
+    background-color: rgb(24, 24, 24);
+    color: rgb(var(--foreground-rgb));
+    transition: all 0.2s;
+}
+
+.formInput:focus {
+    outline: none;
+    border-color: rgb(var(--primary-rgb));
+    box-shadow: 0 0 0 1px rgba(var(--primary-rgb), 0.2);
+}
+
+.formInput:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.formHelp {
+    font-size: 0.75rem;
+    color: rgba(var(--foreground-rgb), 0.6);
+    margin-top: 0.25rem;
+}
+
+/* Message Box */
+.messageBox {
+    padding: 1rem;
+    border-radius: 0.375rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.875rem;
+}
+
+.successMessage {
+    background-color: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    color: rgb(16, 185, 129);
+}
+
+.errorMessage {
+    background-color: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    color: rgb(239, 68, 68);
+}
+
+/* Usage Section */
+.usageCard {
+    background-color: rgb(18, 18, 18);
+    border-radius: 0.75rem;
+    border: 1px solid rgba(var(--border-rgb), 0.2);
+    padding: 1.5rem;
+}
+
+.usageTitle {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.usageDescription {
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    color: rgba(var(--foreground-rgb), 0.8);
+}
+
+.usageList {
+    list-style: none;
+    margin-bottom: 2rem;
+}
+
+.usageItem {
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem 0;
+    border-bottom: 1px solid rgba(var(--border-rgb), 0.1);
+}
+
+.usageItem:last-child {
+    border-bottom: none;
+}
+
+.usageLabel {
+    font-weight: 500;
+    color: rgba(var(--foreground-rgb), 0.9);
+}
+
+.usageValue {
+    color: rgba(var(--foreground-rgb), 0.7);
+}
+
+.usageNotes {
+    background-color: rgba(var(--primary-rgb), 0.05);
+    border-radius: 0.5rem;
+    padding: 1.25rem;
+    margin-top: 1.5rem;
+}
+
+.notesTitle {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: rgb(var(--primary-rgb));
+}
+
+.notesParagraph {
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    font-size: 0.875rem;
+    color: rgba(var(--foreground-rgb), 0.8);
+}
+
+.contactLink {
+    color: rgb(var(--primary-rgb));
+    font-weight: 500;
+    text-decoration: none;
+    transition: opacity 0.2s;
+}
+
+.contactLink:hover {
+    opacity: 0.8;
+    text-decoration: underline;
 }

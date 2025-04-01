@@ -1,448 +1,333 @@
 /* Page Layout */
 .page {
     min-height: 100vh;
-    padding-top: 4rem;
+    /* Remove top padding if navbar is fixed */
+    /* padding-top: 4rem; */
     display: flex;
     flex-direction: column;
     background-color: rgb(0, 0, 0);
-}
-
-.flexContainer {
-    flex-grow: 1;
-    display: flex;
-}
-
-/* Sidebar */
-.sidebar {
-    width: 16rem;
-    background-color: rgb(10, 10, 10);
-    border-right: 1px solid rgba(var(--border-rgb), 0.5);
+    /* Ensure page takes full height below fixed navbar */
     height: 100vh;
-    position: sticky;
-    top: 4rem;
-    display: none;
-}
-
-@media (min-width: 768px) {
-    .sidebar {
-        display: block;
-    }
-}
-
-.sidebarPadding {
-    padding: 1rem;
-}
-
-.sidebarSection {
-    padding: 0.5rem;
-    margin-top: 1rem;
-}
-
-.sidebarHeading {
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: rgba(var(--foreground-rgb), 0.7);
-    padding: 0 0.75rem;
-    margin-bottom: 0.5rem;
-}
-
-.toolList {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-}
-
-.toolButton {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 0.75rem;
-    border-radius: 0.5rem;
-    text-align: left;
-    transition: all 0.2s;
-}
-
-.toolButtonActive {
-    background-color: rgba(var(--primary-rgb), 0.2);
-    color: rgb(var(--primary-rgb));
-}
-
-.toolButtonInactive {
-    color: rgba(var(--foreground-rgb), 0.8);
-}
-
-.toolButtonInactive:hover {
-    background-color: rgba(45, 55, 75, 0.7);
-}
-
-.toolIcon {
-    font-size: 1.25rem;
-}
-
-.toolText {
-    white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis;
+    /* Prevent main page scroll */
 }
 
-.userProfileSection {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding: 1rem;
+/* New Top Bar for Back Button */
+.topBar {
+    padding: 0.75rem 1.5rem;
+    /* Adjust padding */
+    border-bottom: 1px solid rgb(38, 38, 38);
+    background-color: rgb(10, 10, 10);
+    /* Match new main content bg */
+    flex-shrink: 0;
+    /* Prevent shrinking */
 }
 
-.userProfileCard {
-    display: flex;
+.backButtonStandalone {
+    display: inline-flex;
     align-items: center;
-    padding: 0.75rem;
+    padding: 0.5rem 1rem;
     border-radius: 0.5rem;
-    background-color: rgba(var(--card-rgb), 0.7);
-    border: 1px solid rgba(var(--border-rgb), 0.4);
-}
-
-.userAvatar {
-    width: 2rem;
-    height: 2rem;
-    border-radius: 50%;
-    background-color: rgba(var(--primary-rgb), 0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 0.75rem;
-}
-
-.userInitials {
-    color: rgb(var(--primary-rgb));
-    font-weight: 600;
-}
-
-.userInfo {
-    flex: 1;
-    min-width: 0;
-}
-
-.userName {
+    background-color: rgb(50, 50, 50);
+    color: rgb(220, 220, 220);
+    text-decoration: none;
     font-size: 0.875rem;
     font-weight: 500;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    transition: background-color 0.2s;
 }
 
-.userPlan {
-    font-size: 0.75rem;
-    color: rgba(var(--foreground-rgb), 0.6);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+.backButtonStandalone svg {
+    width: 1em;
+    height: 1em;
+    margin-right: 0.3rem;
 }
 
-/* Main Content */
-.mainContent {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
+.backButtonStandalone:hover {
+    background-color: rgb(70, 70, 70);
+    color: white;
 }
 
-.toolHeader {
-    border-bottom: 1px solid rgba(var(--border-rgb), 1);
-    position: sticky;
-    top: 4rem;
-    z-index: 10;
-    background-color: rgba(12, 12, 12, 0.98);
-    backdrop-filter: blur(8px);
-}
-
-.toolHeaderContent {
+/* Main Content Full Width */
+.mainContentFullWidth {
+    flex-grow: 1;
+    /* Takes remaining height */
     width: 100%;
-    max-width: 1200px;
+    max-width: 960px;
+    /* Limit width for readability */
     margin: 0 auto;
-    padding: 0 1rem;
-    height: 4rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    /* Center the content */
+    padding: 2rem;
+    /* Add padding around content */
+    overflow-y: auto;
+    /* Allow scrolling within main content */
+    background-color: rgb(10, 10, 10);
+    /* Darker main area */
 }
 
-.toolInfo {
-    display: flex;
-    align-items: center;
+/* Form Section Styles */
+.formSection {
+    background-color: rgb(17, 17, 17);
+    /* Card background */
+    padding: 1.5rem 2rem;
+    border-radius: 0.75rem;
+    margin-bottom: 2rem;
+    border: 1px solid rgb(38, 38, 38);
 }
 
-.toolHeaderIcon {
+.formSection h1 {
     font-size: 1.5rem;
-    margin-right: 0.5rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
 }
 
-.toolTitle {
-    font-size: 1.25rem;
-    font-weight: 600;
+.toolDescription {
+    color: rgb(160, 160, 160);
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
 }
 
 .betaBadge {
+    display: inline-block;
+    background-color: rgba(234, 179, 8, 0.2);
+    /* Yellowish bg */
+    color: rgb(234, 179, 8);
+    padding: 0.2rem 0.5rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+    border-radius: 0.25rem;
     margin-left: 0.5rem;
-    padding: 0 0.5rem;
-    font-size: 0.625rem;
-    line-height: 1.5;
-    border-radius: 9999px;
-    background-color: rgba(var(--accent-rgb), 0.2);
-    color: rgb(var(--accent-rgb));
+    vertical-align: middle;
 }
 
-.toolActions {
+.aiForm {
     display: flex;
-    gap: 0.5rem;
+    flex-direction: column;
+    gap: 1.25rem;
+    /* Space between form fields */
 }
 
-.iconButton {
-    padding: 0.5rem;
-    color: rgba(var(--foreground-rgb), 0.7);
-    transition: color 0.2s;
-}
-
-.iconButton:hover {
-    color: rgb(var(--primary-rgb));
-}
-
-/* Messages Section */
-.messagesSection {
-    flex: 1;
-    overflow-y: auto;
-    padding: 1.5rem 1rem;
-}
-
-.messagesContainer {
-    width: 100%;
-    max-width: 48rem;
-    margin: 0 auto;
-}
-
-.messageGroup {
-    margin-bottom: 1.5rem;
-}
-
-.userMessage {
-    padding-left: 2.5rem;
-}
-
-.messageHeader {
+.formField {
     display: flex;
-    align-items: center;
-    margin-bottom: 0.5rem;
+    flex-direction: column;
 }
 
-.userMessageHeader {
-    justify-content: flex-end;
-}
-
-.messageAvatar {
-    width: 2rem;
-    height: 2rem;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.aiAvatar {
-    background: linear-gradient(to bottom right, rgb(var(--primary-rgb)), rgb(var(--secondary-rgb)));
-    color: white;
-    font-size: 0.75rem;
-    font-weight: 700;
-    margin-right: 0.5rem;
-}
-
-.userAvatar {
-    background-color: rgba(var(--primary-rgb), 0.2);
-    margin-left: 0.5rem;
-}
-
-.messageSender {
+.formLabel {
+    font-size: 0.875rem;
     font-weight: 500;
+    color: rgb(210, 210, 210);
+    margin-bottom: 0.4rem;
 }
 
-.messageTime {
-    font-size: 0.75rem;
-    color: rgba(var(--foreground-rgb), 0.5);
-    margin: 0 0.5rem;
+.requiredAsterisk {
+    color: rgb(220, 38, 38);
+    /* Red */
+    margin-left: 0.25rem;
 }
 
-.messageBubble {
-    border-radius: 1rem;
-    padding: 1rem;
-}
-
-.aiMessageBubble {
-    background-color: rgb(18, 18, 18);
-    border: 1px solid rgba(var(--border-rgb), 0.4);
-}
-
-.userMessageBubble {
-    background-color: rgba(var(--primary-rgb), 0.1);
-    text-align: right;
-}
-
-.messageContent {
-    line-height: 1.5;
-}
-
-/* Typing Indicator */
-.typingIndicator {
-    display: inline-flex;
-    gap: 0.25rem;
-    align-items: center;
-}
-
-.typingDot {
-    width: 0.5rem;
-    height: 0.5rem;
-    background-color: rgba(var(--foreground-rgb), 0.5);
-    border-radius: 50%;
-    animation: bounce 1.5s infinite;
-}
-
-.typingDot:nth-child(2) {
-    animation-delay: 0.15s;
-}
-
-.typingDot:nth-child(3) {
-    animation-delay: 0.3s;
-}
-
-@keyframes bounce {
-
-    0%,
-    80%,
-    100% {
-        transform: translateY(0);
-    }
-
-    40% {
-        transform: translateY(-0.5rem);
-    }
-}
-
-/* Input Area */
-.inputArea {
-    border-top: 1px solid rgba(var(--border-rgb), 1);
-    background-color: rgba(12, 12, 12, 0.98);
-    backdrop-filter: blur(8px);
-    padding: 1rem 0;
-    position: sticky;
-    bottom: 0;
-}
-
-.inputContainer {
+.formInput,
+.aiForm textarea,
+.aiForm select {
     width: 100%;
-    max-width: 48rem;
-    margin: 0 auto;
-    padding: 0 1rem;
-}
-
-.inputWrapper {
-    position: relative;
-}
-
-.textarea {
-    width: 100%;
-    border-radius: 0.75rem;
-    border: 1px solid rgba(var(--border-rgb), 0.4);
-    background-color: rgb(24, 24, 24);
     padding: 0.75rem 1rem;
-    padding-right: 3.5rem;
-    resize: none;
+    background-color: rgb(30, 30, 30);
+    border: 1px solid rgb(60, 60, 60);
+    border-radius: 0.5rem;
+    color: rgb(240, 240, 240);
+    font-size: 0.9rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-.textarea:focus {
+.formInput:focus,
+.aiForm textarea:focus,
+.aiForm select:focus {
     outline: none;
+    border-color: rgb(var(--primary-rgb));
     box-shadow: 0 0 0 2px rgba(var(--primary-rgb), 0.3);
 }
 
-.sendButton {
-    position: absolute;
-    bottom: 0.75rem;
-    right: 0.75rem;
-    border-radius: 0.5rem;
-    padding: 0.5rem;
-}
-
-.sendButtonActive {
-    color: rgb(var(--primary-rgb));
-}
-
-.sendButtonActive:hover {
-    background-color: rgba(var(--primary-rgb), 0.1);
-}
-
-.sendButtonInactive {
-    color: rgba(var(--foreground-rgb), 0.3);
-    cursor: not-allowed;
-}
-
-.toolbarSection {
-    position: absolute;
-    bottom: 100%;
-    margin-bottom: 0.5rem;
-    left: 0;
-    right: 0;
-    background-color: rgb(var(--card-rgb));
-    border-radius: 0.5rem;
-    border: 1px solid rgba(var(--border-rgb), 0.4);
-    padding: 0.5rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.toolbarButton {
-    padding: 0.5rem;
-    border-radius: 0.25rem;
-    color: rgba(var(--foreground-rgb), 0.7);
-}
-
-.toolbarButton:hover {
-    background-color: rgba(var(--primary-rgb), 0.1);
+.aiForm textarea {
+    min-height: 80px;
+    /* Minimum height for textareas */
+    resize: vertical;
+    /* Allow vertical resize */
 }
 
 .disclaimer {
+    font-size: 0.8rem;
+    color: rgb(160, 160, 160);
     margin-top: 0.5rem;
-    font-size: 0.75rem;
-    color: rgba(var(--foreground-rgb), 0.5);
-    text-align: center;
+    /* Add some space above */
+    padding: 0.75rem;
+    background-color: rgba(160, 160, 160, 0.1);
+    border-left: 3px solid rgb(160, 160, 160);
+    border-radius: 0 0.25rem 0.25rem 0;
 }
 
-/* New Chat Button */
-.newChatButton {
-    width: 100%;
-    padding: 0.75rem 0;
-    display: flex;
+.submitButton {
+    padding: 0.75rem 1.5rem;
+    background-color: rgb(var(--primary-rgb));
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s, opacity 0.2s;
+    display: inline-flex;
+    /* For spinner alignment */
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    color: white;
-    background: linear-gradient(to right, rgb(var(--primary-rgb)), rgb(var(--secondary-rgb)));
+    align-self: flex-start;
+    /* Align button to the left */
+}
+
+.submitButton:hover {
+    background-color: rgba(var(--primary-rgb), 0.85);
+}
+
+.submitButtonDisabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.buttonSpinner {
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+/* Response Section Styles */
+.responseSection {
+    background-color: rgb(17, 17, 17);
+    /* Card background */
+    padding: 1.5rem 2rem;
+    border-radius: 0.75rem;
+    border: 1px solid rgb(38, 38, 38);
+    min-height: 150px;
+    /* Ensure it has some height */
+    display: flex;
+    flex-direction: column;
+}
+
+.responseSection h2 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: rgb(210, 210, 210);
+    flex-shrink: 0;
+}
+
+.responseLoading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    color: rgb(160, 160, 160);
+    flex-grow: 1;
+}
+
+.responseContent {
+    color: rgb(220, 220, 220);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    /* Preserve whitespace and newlines */
+    flex-grow: 1;
+}
+
+.responseContent p {
+    margin-bottom: 0.75em;
+    /* Space between paragraphs */
+}
+
+.responseContent p:last-child {
+    margin-bottom: 0;
+}
+
+.responsePlaceholder {
+    color: rgb(120, 120, 120);
+    font-style: italic;
+    text-align: center;
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.errorMessage {
+    color: rgb(248, 113, 113);
+    /* Red-400 */
+    background-color: rgba(248, 113, 113, 0.1);
+    border: 1px solid rgba(248, 113, 113, 0.3);
+    padding: 0.75rem 1rem;
     border-radius: 0.5rem;
-    font-weight: 500;
-    transition: all 0.2s;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+    /* Prevent shrinking if response area grows */
+    margin-bottom: 1rem;
+    /* Space below error */
 }
 
-.newChatButton:hover {
-    opacity: 0.9;
-    transform: translateY(-1px);
+
+/* Loading Spinner (can be reused) */
+.loadingContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+    /* Take full height in flex parent */
+    padding: 2rem;
+    color: rgb(160, 160, 160);
 }
 
-/* Mobile Menu Button */
-.mobileMenuButton {
-    display: block;
+.spinner {
+    width: 2rem;
+    height: 2rem;
+    border: 3px solid rgba(var(--primary-rgb), 0.3);
+    border-top-color: rgb(var(--primary-rgb));
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1rem;
 }
 
-@media (min-width: 768px) {
-    .mobileMenuButton {
-        display: none;
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
     }
+}
+
+/* Ensure scrollbars look decent if they appear */
+/* Webkit */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgb(25, 25, 25);
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: rgb(70, 70, 70);
+    border-radius: 4px;
+    border: 2px solid rgb(25, 25, 25);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: rgb(90, 90, 90);
+}
+
+/* Firefox */
+:global(*) {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(70, 70, 70) rgb(25, 25, 25);
 }

@@ -1,63 +1,174 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import Link from 'next/link';
 import styles from './page.module.css';
+import pb from '@/lib/pocketbase';
 
 export default function AccountPage() {
-    const [activeTab, setActiveTab] = useState('usage');
+    const router = useRouter();
+    const [isLoading, setIsLoading] = useState(true);
+    const [activeTab, setActiveTab] = useState('overview');
+    const [userData, setUserData] = useState<any>(null);
+    const [usageStats, setUsageStats] = useState<any>(null);
+    const [updateSuccess, setUpdateSuccess] = useState(false);
+    const [updateError, setUpdateError] = useState('');
+    const [formData, setFormData] = useState({
+        name: '',
+        email: '',
+        avatar: null as File | null,
+    });
 
-    // Mock user data
-    const userData = {
-        name: 'Alex Johnson',
-        email: 'alex.johnson@schooldistrict.edu',
-        role: 'Science Teacher',
-        school: 'Westwood High School',
-        plan: 'Free',
-        usageStats: {
-            daily: {
-                used: 14,
-                limit: 20,
-                percentage: 70
-            },
-            monthly: {
-                used: 243,
-                limit: 500,
-                percentage: 48.6
+    useEffect(() => {
+        const checkAuth = async () => {
+            try {
+                if (!pb.authStore.isValid) {
+                    router.push('/login');
+                    return;
+                }
+
+                // Get current user data
+                const user = pb.authStore.model;
+                setUserData(user);
+                setFormData({
+                    name: user?.name || '',
+                    email: user?.email || '',
+                    avatar: null,
+                });
+
+                // Fetch usage stats from the ai_usage collection
+                try {
+                    const usageRecord = await pb.collection('ai_usage').getFirstListItem(
+                        `user_id="${user?.id}"`,
+                        { sort: '-created' }
+                    );
+                    setUsageStats(usageRecord);
+                } catch (error) {
+                    // If no usage record exists, create a default one
+                    const defaultUsage = {
+                        user_id: user?.id,
+                        daily_queries: 0,
+                        daily_limit: 25,
+                        saved_templates: 0,
+                        templates_limit: 10,
+                    };
+
+                    try {
+                        const newUsageRecord = await pb.collection('ai_usage').create(defaultUsage);
+                        setUsageStats(newUsageRecord);
+                    } catch (createError) {
+                        console.error('Error creating usage record:', createError);
+                    }
+                }
+
+                setIsLoading(false);
+            } catch (error) {
+                console.error('Auth error:', error);
+                router.push('/login');
             }
-        },
-        usageHistory: [
-            { date: 'May 10, 2024', tool: 'AI Lesson Planner', queries: 6 },
-            { date: 'May 9, 2024', tool: 'Assessment Generator', queries: 4 },
-            { date: 'May 9, 2024', tool: 'Feedback Generator', queries: 3 },
-            { date: 'May 8, 2024', tool: 'Rubric Creator', queries: 5 },
-            { date: 'May 7, 2024', tool: 'AI Lesson Planner', queries: 8 },
-        ],
-        savedTemplates: [
-            { id: 1, name: 'Physics Lab Report Template', tool: 'AI Lesson Planner', date: 'May 5, 2024' },
-            { id: 2, name: 'Weekly Quiz Format', tool: 'Assessment Generator', date: 'April 28, 2024' },
-            { id: 3, name: 'Student Feedback Template', tool: 'Feedback Generator', date: 'April 15, 2024' },
-        ]
+        };
+
+        checkAuth();
+    }, [router]);
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value, files } = e.target;
+
+        if (name === 'avatar' && files && files.length > 0) {
+            setFormData(prev => ({
+                ...prev,
+                avatar: files[0],
+            }));
+        } else {
+            setFormData(prev => ({
+                ...prev,
+                [name]: value,
+            }));
+        }
     };
+
+    const handleUpdateProfile = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setUpdateSuccess(false);
+        setUpdateError('');
+
+        try {
+            const data: Record<string, any> = {};
+
+            if (formData.name !== userData.name) {
+                data.name = formData.name;
+            }
+
+            if (formData.avatar) {
+                data.avatar = formData.avatar;
+            }
+
+            // Only update if there are changes
+            if (Object.keys(data).length > 0) {
+                const updated = await pb.collection('users').update(userData.id, data);
+                setUserData(updated);
+                setUpdateSuccess(true);
+
+                // Refresh auth store with updated user data
+                const authData = { ...pb.authStore.model, ...updated };
+                pb.authStore.save(pb.authStore.token, authData);
+            } else {
+                setUpdateSuccess(true);
+            }
+        } catch (error: any) {
+            console.error('Update error:', error);
+            setUpdateError(error.message || 'Failed to update profile');
+        }
+    };
+
+    const getInitials = (name: string) => {
+        return name
+            .split(' ')
+            .map(part => part.charAt(0))
+            .join('')
+            .toUpperCase();
+    };
+
+    if (isLoading) {
+        return (
+            <div className={styles.page}>
+                <div className={styles.loadingContainer}>
+                    <div className={styles.spinner}></div>
+                    <p>Loading your account...</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className={styles.page}>
-            {/* Header */}
             <section className={styles.headerSection}>
                 <div className={styles.container}>
                     <div className={styles.headerContent}>
                         <div className={styles.profileLayout}>
                             <div className={styles.avatar}>
-                                {userData.name.split(' ').map(n => n[0]).join('')}
+                                {userData?.avatar ? (
+                                    <Image
+                                        src={pb.getFileUrl(userData, userData.avatar)}
+                                        alt={userData.name || 'User'}
+                                        width={96}
+                                        height={96}
+                                        className={styles.avatarImage}
+                                    />
+                                ) : (
+                                    getInitials(userData?.name || 'User')
+                                )}
                             </div>
                             <div className={styles.userInfo}>
-                                <h1 className={styles.userName}>{userData.name}</h1>
-                                <p className={styles.userRole}>{userData.role} at {userData.school}</p>
-                                <p className={styles.userEmail}>{userData.email}</p>
+                                <h1 className={styles.userName}>{userData?.name || 'User'}</h1>
+                                <p className={styles.userRole}>
+                                    {userData?.verified ? 'Verified User' : 'Unverified User'}
+                                </p>
+                                <p className={styles.userEmail}>{userData?.email}</p>
                                 <div className={styles.badgeContainer}>
-                                    <span className={styles.planBadge}>
-                                        Non-profit Access
-                                    </span>
+                                    <span className={styles.planBadge}>Free Plan</span>
                                 </div>
                             </div>
                         </div>
@@ -65,322 +176,210 @@ export default function AccountPage() {
                 </div>
             </section>
 
-            {/* Main Content */}
-            <section className={styles.mainSection}>
-                <div className={styles.container}>
-                    <div className={styles.content}>
-                        {/* Tabs */}
-                        <div className={styles.tabsContainer}>
-                            <button
-                                className={`${styles.tabButton} ${activeTab === 'usage' ? styles.activeTab : ''}`}
-                                onClick={() => setActiveTab('usage')}
-                            >
-                                Usage & Limits
-                            </button>
-                            <button
-                                className={`${styles.tabButton} ${activeTab === 'templates' ? styles.activeTab : ''}`}
-                                onClick={() => setActiveTab('templates')}
-                            >
-                                Saved Templates
-                            </button>
-                            <button
-                                className={`${styles.tabButton} ${activeTab === 'settings' ? styles.activeTab : ''}`}
-                                onClick={() => setActiveTab('settings')}
-                            >
-                                Account Settings
-                            </button>
-                            <button
-                                className={`${styles.tabButton} ${activeTab === 'billing' ? styles.activeTab : ''}`}
-                                onClick={() => setActiveTab('billing')}
-                            >
-                                Billing
-                            </button>
-                        </div>
+            <div className={styles.container}>
+                <div className={styles.tabContainer}>
+                    <div className={styles.tabs}>
+                        <button
+                            className={`${styles.tabButton} ${activeTab === 'overview' ? styles.activeTab : ''}`}
+                            onClick={() => setActiveTab('overview')}
+                        >
+                            Overview
+                        </button>
+                        <button
+                            className={`${styles.tabButton} ${activeTab === 'profile' ? styles.activeTab : ''}`}
+                            onClick={() => setActiveTab('profile')}
+                        >
+                            Profile Settings
+                        </button>
+                        <button
+                            className={`${styles.tabButton} ${activeTab === 'usage' ? styles.activeTab : ''}`}
+                            onClick={() => setActiveTab('usage')}
+                        >
+                            Usage & Statistics
+                        </button>
+                    </div>
 
-                        {/* Usage Tab Content */}
-                        {activeTab === 'usage' && (
-                            <div>
-                                {/* Usage Stats */}
-                                <div>
-                                    <h2 className={styles.sectionTitle}>AI Usage Statistics</h2>
+                    <div className={styles.tabContent}>
+                        {activeTab === 'overview' && (
+                            <>
+                                <section className={styles.statsSection}>
+                                    <h2 className={styles.sectionTitle}>Usage Statistics</h2>
                                     <div className={styles.statsGrid}>
                                         <div className={styles.statsCard}>
                                             <div className={styles.statsHeader}>
                                                 <h3 className={styles.statsTitle}>Daily Queries</h3>
-                                                <p className={styles.statsSubtitle}>Resets at midnight</p>
+                                                <p className={styles.statsSubtitle}>Refreshes daily at midnight</p>
                                             </div>
-                                            <p className={styles.statsValue}>14 / 15</p>
+                                            <p className={styles.statsValue}>{usageStats?.daily_queries || 0} / {usageStats?.daily_limit || 25}</p>
                                             <div className={styles.progressBar}>
-                                                <div className={`${styles.progressFill} ${styles.primaryFill}`} style={{ width: '93%' }}></div>
+                                                <div
+                                                    className={`${styles.progressFill} ${styles.primaryFill}`}
+                                                    style={{ width: `${Math.min(((usageStats?.daily_queries || 0) / (usageStats?.daily_limit || 25)) * 100, 100)}%` }}
+                                                ></div>
                                             </div>
                                             <div className={styles.progressLabels}>
                                                 <span>0</span>
-                                                <span>15</span>
+                                                <span>{usageStats?.daily_limit || 25}</span>
                                             </div>
                                         </div>
-
-                                        <div className={styles.statsCard}>
-                                            <div className={styles.statsHeader}>
-                                                <h3 className={styles.statsTitle}>Generated Lessons</h3>
-                                                <p className={styles.statsSubtitle}>This month</p>
-                                            </div>
-                                            <p className={styles.statsValue}>12</p>
-                                        </div>
-
                                         <div className={styles.statsCard}>
                                             <div className={styles.statsHeader}>
                                                 <h3 className={styles.statsTitle}>Saved Templates</h3>
-                                                <p className={styles.statsSubtitle}>Max 10</p>
+                                                <p className={styles.statsSubtitle}>Total templates saved</p>
                                             </div>
-                                            <p className={styles.statsValue}>7 / 10</p>
+                                            <p className={styles.statsValue}>{usageStats?.saved_templates || 0} / {usageStats?.templates_limit || 10}</p>
                                             <div className={styles.progressBar}>
-                                                <div className={`${styles.progressFill} ${styles.accentFill}`} style={{ width: '70%' }}></div>
+                                                <div
+                                                    className={`${styles.progressFill} ${styles.accentFill}`}
+                                                    style={{ width: `${Math.min(((usageStats?.saved_templates || 0) / (usageStats?.templates_limit || 10)) * 100, 100)}%` }}
+                                                ></div>
                                             </div>
                                             <div className={styles.progressLabels}>
                                                 <span>0</span>
-                                                <span>10</span>
+                                                <span>{usageStats?.templates_limit || 10}</span>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </section>
 
-                                {/* Usage History */}
-                                <div>
-                                    <div className={styles.sectionHeader}>
-                                        <h2 className={styles.sectionTitle}>Recent Activity</h2>
-                                        <button className={styles.viewAllLink}>View All</button>
-                                    </div>
-                                    <div className={styles.tableContainer}>
-                                        <table className={styles.table}>
-                                            <thead className={styles.tableHeader}>
-                                                <tr>
-                                                    <th className={styles.tableHeaderCell}>Date</th>
-                                                    <th className={styles.tableHeaderCell}>AI Tool</th>
-                                                    <th className={styles.tableHeaderCell}>Queries</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {userData.usageHistory.map((item, index) => (
-                                                    <tr key={index} className={styles.tableRow}>
-                                                        <td className={styles.tableCell}>{item.date}</td>
-                                                        <td className={styles.tableCell}>{item.tool}</td>
-                                                        <td className={styles.tableCell}>{item.queries}</td>
-                                                    </tr>
-                                                ))}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-
-                                {/* Plan Upgrade */}
-                                <div className={styles.upgradeSection}>
-                                    <div className={styles.upgradeCard}>
-                                        <h3 className={styles.upgradeTitle}>About Our Non-Profit Mission</h3>
-                                        <p className={styles.upgradeDescription}>
-                                            The Future Classroom is a non-profit initiative dedicated to bringing AI tools to K-12 teachers around the world.
-                                            We provide limited access to ensure all educators can benefit from these resources.
-                                            Usage limits help us keep our servers running and the service available to all.
+                                <section className={styles.infoSection}>
+                                    <h2 className={styles.sectionTitle}>Our Mission</h2>
+                                    <div className={styles.infoCard}>
+                                        <p className={styles.infoParagraph}>
+                                            The Future Classroom is a non-profit initiative designed to bring AI-powered educational tools to students and educators around the world.
+                                            Our mission is to democratize access to cutting-edge educational technology and make learning more engaging, personalized, and effective.
                                         </p>
-
-                                        <p className={styles.upgradeDescription} style={{ marginTop: '1rem' }}>
-                                            If you'd like to support our mission, please consider making a donation to help us expand our services
-                                            and increase usage limits for all educators.
+                                        <p className={styles.infoParagraph}>
+                                            As a free user, you have access to a limited number of daily queries and saved templates.
+                                            We rely on donations and support from our community to keep these services accessible to everyone.
                                         </p>
-
-                                        <div style={{ marginTop: '1.5rem' }}>
-                                            <button className={styles.primaryButton}>
-                                                Make a Donation
-                                            </button>
+                                        <div className={styles.buttonContainer}>
+                                            <Link href="/donate" className={styles.primaryButton}>
+                                                Support Our Mission
+                                            </Link>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
+                                </section>
+                            </>
                         )}
 
-                        {/* Templates Tab Content */}
-                        {activeTab === 'templates' && (
-                            <div>
-                                <h2 className={styles.sectionTitle}>Your Saved Templates</h2>
-                                <div className={styles.templatesList}>
-                                    {userData.savedTemplates.map((template) => (
-                                        <div key={template.id} className={styles.templateCard}>
-                                            <h3 className={styles.templateName}>{template.name}</h3>
-                                            <p className={styles.templateTool}>{template.tool}</p>
-                                            <p className={styles.templateDate}>Saved on {template.date}</p>
-                                            <div className={styles.templateActions}>
-                                                <button className={`${styles.templateActionButton} ${styles.useButton}`}>
-                                                    Use Template
-                                                </button>
-                                                <button className={`${styles.templateActionButton} ${styles.deleteButton}`}>
-                                                    Delete
-                                                </button>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
+                        {activeTab === 'profile' && (
+                            <section>
+                                <h2 className={styles.sectionTitle}>Profile Settings</h2>
 
-                        {/* Settings Tab Content */}
-                        {activeTab === 'settings' && (
-                            <div>
-                                <div className={styles.formSection}>
-                                    <h2 className={styles.sectionTitle}>Personal Information</h2>
+                                {updateSuccess && (
+                                    <div className={`${styles.messageBox} ${styles.successMessage}`}>
+                                        Profile updated successfully!
+                                    </div>
+                                )}
+
+                                {updateError && (
+                                    <div className={`${styles.messageBox} ${styles.errorMessage}`}>
+                                        {updateError}
+                                    </div>
+                                )}
+
+                                <form className={styles.profileForm} onSubmit={handleUpdateProfile}>
                                     <div className={styles.formGroup}>
-                                        <label className={styles.formLabel}>Full Name</label>
+                                        <label htmlFor="name" className={styles.formLabel}>Name</label>
                                         <input
                                             type="text"
+                                            id="name"
+                                            name="name"
+                                            value={formData.name}
+                                            onChange={handleInputChange}
                                             className={styles.formInput}
-                                            defaultValue={userData.name}
+                                            placeholder="Your name"
                                         />
                                     </div>
+
                                     <div className={styles.formGroup}>
-                                        <label className={styles.formLabel}>Email Address</label>
+                                        <label htmlFor="email" className={styles.formLabel}>Email</label>
                                         <input
                                             type="email"
+                                            id="email"
+                                            name="email"
+                                            value={formData.email}
                                             className={styles.formInput}
-                                            defaultValue={userData.email}
+                                            disabled
                                         />
+                                        <p className={styles.formHelp}>Email cannot be changed</p>
                                     </div>
-                                    <div className={styles.formGroup}>
-                                        <label className={styles.formLabel}>Role</label>
-                                        <input
-                                            type="text"
-                                            className={styles.formInput}
-                                            defaultValue={userData.role}
-                                        />
-                                    </div>
-                                    <div className={styles.formGroup}>
-                                        <label className={styles.formLabel}>School/Organization</label>
-                                        <input
-                                            type="text"
-                                            className={styles.formInput}
-                                            defaultValue={userData.school}
-                                        />
-                                    </div>
-                                </div>
 
-                                <div className={styles.formSection}>
-                                    <h2 className={styles.formSubtitle}>Change Password</h2>
                                     <div className={styles.formGroup}>
-                                        <label className={styles.formLabel}>Current Password</label>
+                                        <label htmlFor="avatar" className={styles.formLabel}>Profile Picture</label>
                                         <input
-                                            type="password"
+                                            type="file"
+                                            id="avatar"
+                                            name="avatar"
+                                            onChange={handleInputChange}
                                             className={styles.formInput}
+                                            accept="image/*"
                                         />
+                                        <p className={styles.formHelp}>Recommended size: 200x200 pixels</p>
                                     </div>
-                                    <div className={styles.formGroup}>
-                                        <label className={styles.formLabel}>New Password</label>
-                                        <input
-                                            type="password"
-                                            className={styles.formInput}
-                                        />
-                                    </div>
-                                    <div className={styles.formGroup}>
-                                        <label className={styles.formLabel}>Confirm New Password</label>
-                                        <input
-                                            type="password"
-                                            className={styles.formInput}
-                                        />
-                                    </div>
-                                </div>
 
-                                <div className={styles.formSection}>
-                                    <h2 className={styles.formSubtitle}>Preferences</h2>
-                                    <div className={styles.checkboxGroup}>
-                                        <input type="checkbox" id="emailNotifications" className={styles.checkboxInput} defaultChecked />
-                                        <label htmlFor="emailNotifications">Receive email notifications</label>
+                                    <div className={styles.buttonContainer}>
+                                        <button type="submit" className={styles.primaryButton}>
+                                            Update Profile
+                                        </button>
                                     </div>
-                                    <div className={styles.checkboxGroup}>
-                                        <input type="checkbox" id="saveHistory" className={styles.checkboxInput} defaultChecked />
-                                        <label htmlFor="saveHistory">Save AI interaction history</label>
-                                    </div>
-                                    <div className={styles.checkboxGroup}>
-                                        <input type="checkbox" id="autoSave" className={styles.checkboxInput} defaultChecked />
-                                        <label htmlFor="autoSave">Auto-save generated content</label>
-                                    </div>
-                                </div>
-
-                                <div className={styles.buttonGroup}>
-                                    <button className={styles.saveButton}>Save Changes</button>
-                                    <button className={styles.cancelButton}>Cancel</button>
-                                </div>
-                            </div>
+                                </form>
+                            </section>
                         )}
 
-                        {/* Billing Tab Content */}
-                        {activeTab === 'billing' && (
-                            <div>
-                                <h2 className={styles.sectionTitle}>Subscription Details</h2>
-                                <div className={styles.billingInfo}>
-                                    <div className={styles.billingRow}>
-                                        <span className={styles.billingLabel}>Current Plan</span>
-                                        <span>{userData.plan}</span>
+                        {activeTab === 'usage' && (
+                            <section>
+                                <h2 className={styles.sectionTitle}>Usage & Statistics</h2>
+
+                                <div className={styles.usageCard}>
+                                    <h3 className={styles.usageTitle}>Your Current Plan</h3>
+                                    <p className={styles.usageDescription}>
+                                        You're currently on the <strong>Free Plan</strong>. This provides you with limited access to our educational AI tools.
+                                    </p>
+
+                                    <ul className={styles.usageList}>
+                                        <li className={styles.usageItem}>
+                                            <span className={styles.usageLabel}>Daily AI Queries</span>
+                                            <span className={styles.usageValue}>{usageStats?.daily_limit || 25} queries</span>
+                                        </li>
+                                        <li className={styles.usageItem}>
+                                            <span className={styles.usageLabel}>Saved Templates</span>
+                                            <span className={styles.usageValue}>{usageStats?.templates_limit || 10} templates</span>
+                                        </li>
+                                        <li className={styles.usageItem}>
+                                            <span className={styles.usageLabel}>Model Access</span>
+                                            <span className={styles.usageValue}>Standard models</span>
+                                        </li>
+                                        <li className={styles.usageItem}>
+                                            <span className={styles.usageLabel}>Community Features</span>
+                                            <span className={styles.usageValue}>Read access only</span>
+                                        </li>
+                                    </ul>
+
+                                    <div className={styles.buttonContainer}>
+                                        <Link href="/donate" className={styles.primaryButton}>
+                                            Upgrade with Donation
+                                        </Link>
                                     </div>
-                                    <div className={styles.billingRow}>
-                                        <span className={styles.billingLabel}>Billing Cycle</span>
-                                        <span>Monthly</span>
-                                    </div>
-                                    <div className={styles.billingRow}>
-                                        <span className={styles.billingLabel}>Next Invoice</span>
-                                        <span>June 15, 2024</span>
+
+                                    <div className={styles.usageNotes}>
+                                        <h4 className={styles.notesTitle}>Note</h4>
+                                        <p className={styles.notesParagraph}>
+                                            The Future Classroom is a non-profit initiative. We provide enhanced access to users who support our mission through donations.
+                                            All proceeds go directly to maintaining and improving our services and expanding access to educational AI tools.
+                                        </p>
+                                        <p className={styles.notesParagraph}>
+                                            For educational institutions interested in bulk access for students, please{' '}
+                                            <a href="mailto:contact@futureclassroom.org" className={styles.contactLink}>contact us</a> for special arrangements.
+                                        </p>
                                     </div>
                                 </div>
-
-                                <h2 className={styles.sectionTitle}>Payment Methods</h2>
-                                <div className={styles.paymentMethod}>
-                                    <div className={styles.paymentIcon}>
-                                        <svg className={styles.addIcon} fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"></path>
-                                            <path fillRule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clipRule="evenodd"></path>
-                                        </svg>
-                                    </div>
-                                    <div className={styles.paymentDetails}>
-                                        <div className={styles.paymentName}>Visa ending in 4242</div>
-                                        <div className={styles.paymentExpiry}>Expires 12/25</div>
-                                    </div>
-                                    <span className={styles.paymentDefault}>Default</span>
-                                </div>
-
-                                <button className={styles.addPaymentButton}>
-                                    <svg className={styles.addIcon} fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                        <path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd"></path>
-                                    </svg>
-                                    Add Payment Method
-                                </button>
-
-                                <h2 className={styles.sectionTitle}>Billing History</h2>
-                                <div className={styles.tableContainer}>
-                                    <table className={styles.table}>
-                                        <thead className={styles.tableHeader}>
-                                            <tr>
-                                                <th className={styles.tableHeaderCell}>Date</th>
-                                                <th className={styles.tableHeaderCell}>Invoice</th>
-                                                <th className={styles.tableHeaderCell}>Amount</th>
-                                                <th className={styles.tableHeaderCell}>Status</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr className={styles.tableRow}>
-                                                <td className={styles.tableCell}>May 15, 2024</td>
-                                                <td className={styles.tableCell}>#INV-2024-005</td>
-                                                <td className={styles.tableCell}>$8.99</td>
-                                                <td className={styles.tableCell}>Paid</td>
-                                            </tr>
-                                            <tr className={styles.tableRow}>
-                                                <td className={styles.tableCell}>April 15, 2024</td>
-                                                <td className={styles.tableCell}>#INV-2024-004</td>
-                                                <td className={styles.tableCell}>$8.99</td>
-                                                <td className={styles.tableCell}>Paid</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
+                            </section>
                         )}
                     </div>
                 </div>
-            </section>
+            </div>
         </div>
     );
 } 

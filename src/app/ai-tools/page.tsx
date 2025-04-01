@@ -227,7 +227,7 @@ export default function AIToolsPage() {
 // Data
 const featuredTools = [
     {
-        id: 'lesson-planner',
+        id: 'lesson-generator',
         icon: '📝',
         name: 'AI Lesson Planner',
         description: 'Generate complete, standards-aligned lesson plans in seconds based on your curriculum, grade level, and teaching style.',
@@ -235,7 +235,7 @@ const featuredTools = [
         beta: false,
     },
     {
-        id: 'assessment-generator',
+        id: 'assessment-creator',
         icon: '📊',
         name: 'Smart Assessment Creator',
         description: 'Create quizzes, tests, and assessments with automatic grading capabilities and detailed student performance analytics.',
@@ -246,7 +246,7 @@ const featuredTools = [
 
 const allTools = [
     {
-        id: 'lesson-planner',
+        id: 'lesson-generator',
         icon: '📝',
         name: 'AI Lesson Planner',
         description: 'Generate complete, standards-aligned lesson plans in seconds.',
@@ -254,7 +254,7 @@ const allTools = [
         beta: false,
     },
     {
-        id: 'assessment-generator',
+        id: 'assessment-creator',
         icon: '📊',
         name: 'Assessment Creator',
         description: 'Create quizzes, tests, and assessments with automatic grading.',
@@ -270,7 +270,7 @@ const allTools = [
         beta: false,
     },
     {
-        id: 'rubric-builder',
+        id: 'rubric-creator',
         icon: '📋',
         name: 'Rubric Builder',
         description: 'Create detailed, fair grading rubrics for any assignment or project.',
@@ -286,7 +286,7 @@ const allTools = [
         beta: false,
     },
     {
-        id: 'feedback-assistant',
+        id: 'feedback-generator',
         icon: '🔄',
         name: 'Feedback Assistant',
         description: 'Provide personalized, constructive feedback on student work quickly.',

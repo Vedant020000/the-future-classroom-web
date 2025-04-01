@@ -1,21 +1,41 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
+import { loginWithGoogle } from '@/lib/pocketbase';
+import { useAuth } from '@/lib/AuthContext';
 
 export default function SignInPage() {
     const router = useRouter();
+    const { isAuthenticated, refresh } = useAuth();
     const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState('');
 
-    const handleGoogleSignIn = () => {
-        setIsLoading(true);
-        // This would normally connect to your Google Auth API
-        // For this demo, we'll simulate a successful login
-        setTimeout(() => {
+    // Redirect to dashboard if already authenticated
+    useEffect(() => {
+        if (isAuthenticated) {
             router.push('/ai-access');
-        }, 1500);
+        }
+    }, [isAuthenticated, router]);
+
+    const handleGoogleSignIn = async () => {
+        setIsLoading(true);
+        setError('');
+
+        try {
+            // Attempt to authenticate with Google via PocketBase
+            await loginWithGoogle();
+            // Refresh the auth context
+            await refresh();
+            // Redirect to dashboard
+            router.push('/ai-access');
+        } catch (err) {
+            console.error('Authentication error:', err);
+            setError('Failed to sign in with Google. Please try again.');
+            setIsLoading(false);
+        }
     };
 
     return (
@@ -25,6 +45,19 @@ export default function SignInPage() {
                     <h1 className={styles.logo}>The Future Classroom</h1>
                     <p className={styles.subtitle}>AI Tools for K-12 Education</p>
                 </div>
+
+                {error && (
+                    <div style={{
+                        color: 'rgb(220, 53, 69)',
+                        backgroundColor: 'rgba(220, 53, 69, 0.1)',
+                        padding: '0.75rem',
+                        borderRadius: '0.375rem',
+                        fontSize: '0.875rem',
+                        textAlign: 'center'
+                    }}>
+                        {error}
+                    </div>
+                )}
 
                 <button
                     className={`${styles.googleButton} ${isLoading ? styles.loadingButton : ''}`}

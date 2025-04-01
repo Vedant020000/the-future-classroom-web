@@ -1,45 +1,50 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-// import './globals.css';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { loginWithGoogle } from '@/lib/pocketbase';
+import { useAuth } from '@/lib/AuthContext';
 import styles from './page.module.css';
 
 export default function LoginPage() {
     const router = useRouter();
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [rememberMe, setRememberMe] = useState(false);
+    const searchParams = useSearchParams();
+    const { user, isAuthenticated, refresh } = useAuth();
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
+    // Get the 'from' parameter to redirect after login
+    const fromParam = searchParams.get('from');
+    const fromPath = fromParam ? `/${fromParam.startsWith('/') ? fromParam.substring(1) : fromParam}` : '/ai-access';
+
+    // Redirect if already authenticated
+    useEffect(() => {
+        if (isAuthenticated && user) {
+            console.log('User already authenticated, redirecting to:', fromPath);
+            router.push(fromPath);
+        }
+    }, [isAuthenticated, user, router, fromPath]);
+
+    const handleGoogleSignIn = async () => {
         setIsLoading(true);
         setError('');
 
-        // Simulate login API call
         try {
-            // In a real app, this would be a fetch call to your auth API
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            console.log('Starting Google sign-in process...');
+            // Use the PocketBase OAuth flow for Google
+            await loginWithGoogle();
 
-            // Simulate successful login and redirect
-            router.push('/ai-access');
-        } catch (err) {
-            setError('Invalid email or password. Please try again.');
-        } finally {
+            // Refresh auth context to get the updated user
+            await refresh();
+
+            console.log('Google sign-in successful, redirecting to:', fromPath);
+            router.push(fromPath);
+        } catch (err: any) {
+            console.error('Authentication error:', err);
+            setError(err.message || 'Failed to sign in with Google. Please try again.');
             setIsLoading(false);
         }
-    };
-
-    const handleGoogleSignIn = () => {
-        setIsLoading(true);
-        // This would normally connect to your Google Auth API
-        // For this demo, we'll simulate a successful login
-        setTimeout(() => {
-            router.push('/ai-access');
-        }, 1500);
     };
 
     return (
@@ -49,6 +54,19 @@ export default function LoginPage() {
                     <h1 className={styles.logo}>The Future Classroom</h1>
                     <p className={styles.subtitle}>AI Tools for K-12 Education</p>
                 </div>
+
+                {error && (
+                    <div style={{
+                        color: 'rgb(220, 53, 69)',
+                        backgroundColor: 'rgba(220, 53, 69, 0.1)',
+                        padding: '0.75rem',
+                        borderRadius: '0.375rem',
+                        fontSize: '0.875rem',
+                        textAlign: 'center'
+                    }}>
+                        {error}
+                    </div>
+                )}
 
                 <button
                     className={`${styles.googleButton} ${isLoading ? styles.loadingButton : ''}`}

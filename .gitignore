@@ -19,6 +19,7 @@
 
 # production
 /build
+src/backend/pb_data/ 
 
 # misc
 .DS_Store
