@@ -1,13 +1,88 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import styles from './page.module.css';
+import { getCommunityPosts, PostFilter, CommunityPost } from '@/lib/communityService';
+import { useAuth } from '@/lib/AuthContext';
+import PostCard from '@/components/community/PostCard';
+import CreatePostForm from '@/components/community/CreatePostForm';
 
 export default function CommunityPage() {
+    const { user } = useAuth();
     const [activeTab, setActiveTab] = useState('trending');
     const [showFilters, setShowFilters] = useState(false);
+    const [posts, setPosts] = useState<CommunityPost[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState('');
+    const [filter, setFilter] = useState<PostFilter>({});
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+
+    useEffect(() => {
+        fetchPosts();
+    }, [currentPage, filter, activeTab]);
+
+    const fetchPosts = async () => {
+        setIsLoading(true);
+        setError('');
+
+        try {
+            // Apply sorting based on active tab
+            let postsFilter = { ...filter };
+
+            if (activeTab === 'trending') {
+                // For trending, we sort by likes in the backend
+                // This is handled in the sorting option in getCommunityPosts
+            } else if (activeTab === 'following') {
+                // For following, show only posts from users you follow
+                // For now, just show the most recent posts
+            }
+
+            const result = await getCommunityPosts(postsFilter, currentPage, 10);
+            setPosts(result.posts);
+            setTotalPages(result.totalPages);
+        } catch (err: any) {
+            setError(err.message || 'Failed to load posts. Please try again.');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const { name, value } = e.target;
+        setFilter(prev => ({
+            ...prev,
+            [name]: value === 'all' ? undefined : value
+        }));
+        setCurrentPage(1); // Reset to first page on filter change
+    };
+
+    const handleFilterApply = () => {
+        fetchPosts();
+        setShowFilters(false);
+    };
+
+    const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const formData = new FormData(e.currentTarget);
+        const search = formData.get('search') as string;
+
+        setFilter(prev => ({
+            ...prev,
+            searchTerm: search.trim() ? search : undefined
+        }));
+        setCurrentPage(1); // Reset to first page on search
+    };
+
+    const getInitials = (name: string) => {
+        return name
+            .split(' ')
+            .map(part => part.charAt(0))
+            .join('')
+            .toUpperCase();
+    };
 
     return (
         <div className={styles.page}>
@@ -86,46 +161,7 @@ export default function CommunityPage() {
                         {/* Main Content */}
                         <div className={styles.mainContent}>
                             {/* Create Post */}
-                            <div className={styles.postCreator}>
-                                <div className={styles.userBar}>
-                                    <div className={styles.avatar}>
-                                        <span className={styles.avatarText}>YT</span>
-                                    </div>
-                                    <div className={styles.postInput}>
-                                        <button
-                                            className={styles.postInputField}
-                                            onClick={() => alert('Post editor would open here')}
-                                        >
-                                            Share your insights, resources, or questions...
-                                        </button>
-                                    </div>
-                                </div>
-                                <div className={styles.postActions}>
-                                    <div className={styles.attachmentButtons}>
-                                        <button className={styles.attachButton}>
-                                            <svg className={styles.attachIcon} fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                                <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd"></path>
-                                            </svg>
-                                            <span>Image</span>
-                                        </button>
-                                        <button className={styles.attachButton}>
-                                            <svg className={styles.attachIcon} fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                                <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm3 2h6v4H7V5zm8 8v2H5v-2h10zm0-4v2H5v-2h10z" clipRule="evenodd"></path>
-                                            </svg>
-                                            <span>Article</span>
-                                        </button>
-                                        <button className={styles.attachButton}>
-                                            <svg className={styles.attachIcon} fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M2 6a2 2 0 012-2h6a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6zM14.553 7.106A1 1 0 0014 8v4a1 1 0 00.553.894l2 1A1 1 0 0018 13V7a1 1 0 00-1.447-.894l-2 1z"></path>
-                                            </svg>
-                                            <span>Video</span>
-                                        </button>
-                                    </div>
-                                    <button className={styles.primaryButton}>
-                                        Share
-                                    </button>
-                                </div>
-                            </div>
+                            <CreatePostForm />
 
                             {/* Feed Tabs */}
                             <div className={styles.feedContainer}>
@@ -152,17 +188,39 @@ export default function CommunityPage() {
 
                                 <div className={styles.filterBar}>
                                     <div>
-                                        <span className={styles.filterLabel}>Showing posts for <span className={styles.currentFilter}>All educators</span></span>
+                                        <span className={styles.filterLabel}>
+                                            Showing posts for{' '}
+                                            <span className={styles.currentFilter}>
+                                                {filter.category ?
+                                                    filter.category.charAt(0).toUpperCase() + filter.category.slice(1) :
+                                                    'All educators'}
+                                            </span>
+                                        </span>
                                     </div>
-                                    <button
-                                        onClick={() => setShowFilters(!showFilters)}
-                                        className={styles.filterButton}
-                                    >
-                                        <svg className={styles.filterIcon} fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                            <path fillRule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z" clipRule="evenodd"></path>
-                                        </svg>
-                                        <span>Filter</span>
-                                    </button>
+                                    <div className={styles.searchAndFilter}>
+                                        <form onSubmit={handleSearch} className={styles.searchForm}>
+                                            <input
+                                                type="text"
+                                                name="search"
+                                                placeholder="Search posts..."
+                                                className={styles.searchInput}
+                                            />
+                                            <button type="submit" className={styles.searchButton}>
+                                                <svg className={styles.searchIcon} fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                                    <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd"></path>
+                                                </svg>
+                                            </button>
+                                        </form>
+                                        <button
+                                            onClick={() => setShowFilters(!showFilters)}
+                                            className={styles.filterButton}
+                                        >
+                                            <svg className={styles.filterIcon} fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                                <path fillRule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z" clipRule="evenodd"></path>
+                                            </svg>
+                                            <span>Filter</span>
+                                        </button>
+                                    </div>
                                 </div>
 
                                 {showFilters && (
@@ -170,36 +228,54 @@ export default function CommunityPage() {
                                         <div className={styles.filtersGrid}>
                                             <div className={styles.formGroup}>
                                                 <label className={styles.formLabel}>Grade Level</label>
-                                                <select className={styles.formSelect}>
-                                                    <option>All Grades</option>
-                                                    <option>Elementary</option>
-                                                    <option>Middle School</option>
-                                                    <option>High School</option>
+                                                <select
+                                                    className={styles.formSelect}
+                                                    name="gradeLevel"
+                                                    onChange={handleFilterChange}
+                                                    value={filter.gradeLevel || 'all'}
+                                                >
+                                                    <option value="all">All Grades</option>
+                                                    <option value="elementary">Elementary</option>
+                                                    <option value="middle">Middle School</option>
+                                                    <option value="high">High School</option>
                                                 </select>
                                             </div>
                                             <div className={styles.formGroup}>
                                                 <label className={styles.formLabel}>Subject</label>
-                                                <select className={styles.formSelect}>
-                                                    <option>All Subjects</option>
-                                                    <option>Mathematics</option>
-                                                    <option>Science</option>
-                                                    <option>Language Arts</option>
-                                                    <option>Social Studies</option>
+                                                <select
+                                                    className={styles.formSelect}
+                                                    name="subject"
+                                                    onChange={handleFilterChange}
+                                                    value={filter.subject || 'all'}
+                                                >
+                                                    <option value="all">All Subjects</option>
+                                                    <option value="math">Mathematics</option>
+                                                    <option value="science">Science</option>
+                                                    <option value="language">Language Arts</option>
+                                                    <option value="social">Social Studies</option>
                                                 </select>
                                             </div>
                                             <div className={styles.formGroup}>
                                                 <label className={styles.formLabel}>Content Type</label>
-                                                <select className={styles.formSelect}>
-                                                    <option>All Types</option>
-                                                    <option>Resources</option>
-                                                    <option>Discussions</option>
-                                                    <option>Questions</option>
-                                                    <option>Success Stories</option>
+                                                <select
+                                                    className={styles.formSelect}
+                                                    name="category"
+                                                    onChange={handleFilterChange}
+                                                    value={filter.category || 'all'}
+                                                >
+                                                    <option value="all">All Types</option>
+                                                    <option value="resource">Resources</option>
+                                                    <option value="discussion">Discussions</option>
+                                                    <option value="question">Questions</option>
+                                                    <option value="announcement">Announcements</option>
                                                 </select>
                                             </div>
                                         </div>
                                         <div className={styles.filterActions}>
-                                            <button className={styles.applyButton}>
+                                            <button
+                                                className={styles.applyButton}
+                                                onClick={handleFilterApply}
+                                            >
                                                 Apply Filters
                                             </button>
                                         </div>
@@ -208,81 +284,51 @@ export default function CommunityPage() {
 
                                 {/* Posts */}
                                 <div className={styles.postsList}>
-                                    {posts.map((post, index) => (
-                                        <div key={index} className={styles.postItem}>
-                                            <div className={styles.postHeader}>
-                                                <div className={styles.postAvatar}>
-                                                    <span className={styles.avatarText}>{post.author.initial}</span>
-                                                </div>
-                                                <div>
-                                                    <div className={styles.authorHeader}>
-                                                        <h4 className={styles.authorName}>{post.author.name}</h4>
-                                                        {post.author.verified && (
-                                                            <svg className={styles.verifiedBadge} fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                                                <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"></path>
-                                                            </svg>
-                                                        )}
-                                                    </div>
-                                                    <p className={styles.authorMeta}>{post.author.title} • {post.timeAgo}</p>
-                                                </div>
-                                            </div>
-
-                                            <h3 className={styles.postTitle}>
-                                                <Link href={`/community/post/${post.id}`} className={styles.postTitleLink}>
-                                                    {post.title}
-                                                </Link>
-                                            </h3>
-
-                                            <p className={styles.postContent}>
-                                                {post.content}
-                                            </p>
-
-                                            {post.image && (
-                                                <div className={styles.postImage}>
-                                                    <img
-                                                        src={post.image}
-                                                        alt={post.title}
-                                                        className={styles.img}
-                                                    />
-                                                </div>
-                                            )}
-
-                                            <div className={styles.postTags}>
-                                                {post.tags.map((tag, tagIndex) => (
-                                                    <Link key={tagIndex} href={`/community/tag/${tag}`} className={styles.postTag}>
-                                                        #{tag}
-                                                    </Link>
-                                                ))}
-                                            </div>
-
-                                            <div className={styles.postActions}>
-                                                <button className={styles.postAction}>
-                                                    <svg className={styles.actionIcon} fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                                        <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z"></path>
-                                                    </svg>
-                                                    <span>{post.likes}</span>
-                                                </button>
-                                                <button className={styles.postAction}>
-                                                    <svg className={styles.actionIcon} fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                                        <path fillRule="evenodd" d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2zM7 8H5v2h2V8zm2 0h2v2H9V8zm6 0h-2v2h2V8z" clipRule="evenodd"></path>
-                                                    </svg>
-                                                    <span>{post.comments}</span>
-                                                </button>
-                                                <button className={styles.postAction}>
-                                                    <svg className={styles.actionIcon} fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                                        <path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"></path>
-                                                    </svg>
-                                                    <span>Share</span>
-                                                </button>
-                                                <button className={styles.postAction}>
-                                                    <svg className={styles.actionIcon} fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                                        <path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z"></path>
-                                                    </svg>
-                                                    <span>Save</span>
-                                                </button>
-                                            </div>
+                                    {isLoading ? (
+                                        <div className={styles.loadingContainer}>
+                                            <div className={styles.spinner}></div>
+                                            <p>Loading posts...</p>
                                         </div>
-                                    ))}
+                                    ) : error ? (
+                                        <div className={styles.errorContainer}>
+                                            <p>{error}</p>
+                                            <button
+                                                className={styles.retryButton}
+                                                onClick={fetchPosts}
+                                            >
+                                                Retry
+                                            </button>
+                                        </div>
+                                    ) : posts.length === 0 ? (
+                                        <div className={styles.emptyContainer}>
+                                            <p>No posts found. Be the first to post in this community!</p>
+                                        </div>
+                                    ) : (
+                                        posts.map((post) => (
+                                            <PostCard key={post.id} post={post} />
+                                        ))
+                                    )}
+
+                                    {/* Pagination */}
+                                    {totalPages > 1 && (
+                                        <div className={styles.pagination}>
+                                            <button
+                                                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                                                disabled={currentPage === 1}
+                                                className={styles.paginationButton}
+                                            >
+                                                Previous
+                                            </button>
+                                            <span className={styles.pageIndicator}>Page {currentPage} of {totalPages}</span>
+                                            <button
+                                                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                                                disabled={currentPage === totalPages}
+                                                className={styles.paginationButton}
+                                            >
+                                                Next
+                                            </button>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -354,57 +400,6 @@ const popularTopics = [
     { name: 'ClassroomManagement', slug: 'classroom-management' },
     { name: 'EdTech', slug: 'edtech' },
     { name: 'ProfessionalDevelopment', slug: 'professional-development' },
-];
-
-const posts = [
-    {
-        id: 1,
-        author: {
-            name: 'Sarah Johnson',
-            initial: 'SJ',
-            title: 'Science Teacher',
-            verified: true,
-        },
-        timeAgo: '2 hours ago',
-        title: 'How I Used AI to Revolutionize My Science Curriculum',
-        content: 'After years of struggling to keep my students engaged in complex science topics, I\'ve found that integrating AI tools has completely transformed my classroom. Here\'s how I did it...',
-        tags: ['AIinEducation', 'ScienceTeaching', 'EdTech'],
-        likes: 45,
-        comments: 12,
-        image: '/images/science-classroom.jpg',
-    },
-    {
-        id: 2,
-        author: {
-            name: 'Michael Rodriguez',
-            initial: 'MR',
-            title: 'Math Department Head',
-            verified: true,
-        },
-        timeAgo: '5 hours ago',
-        title: 'Question: Best AI Tools for Math Visualization?',
-        content: 'I\'m looking for recommendations on AI tools that can help students visualize complex mathematical concepts. Has anyone tried anything that worked particularly well with high school students?',
-        tags: ['MathEducation', 'EdTech', 'VisualLearning'],
-        likes: 18,
-        comments: 23,
-        image: null,
-    },
-    {
-        id: 3,
-        author: {
-            name: 'Lisa Chen',
-            initial: 'LC',
-            title: 'Elementary Educator',
-            verified: false,
-        },
-        timeAgo: '1 day ago',
-        title: 'Resource: Collection of AI-Generated Reading Comprehension Exercises',
-        content: 'I\'ve created a collection of reading comprehension exercises using the AI tools on this platform. They\'re differentiated for grades 3-5 and cover various reading levels. Feel free to use and adapt them!',
-        tags: ['ReadingComprehension', 'ElementaryEd', 'FreeResources'],
-        likes: 87,
-        comments: 34,
-        image: '/images/reading-resources.jpg',
-    },
 ];
 
 const events = [

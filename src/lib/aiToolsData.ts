@@ -4,10 +4,11 @@
 export interface FormField {
     id: string;
     label: string;
-    type: 'text' | 'textarea' | 'select';
+    type: 'text' | 'textarea' | 'select' | 'number' | 'checkbox';
     placeholder?: string;
+    helperText?: string;
     required?: boolean;
-    options?: string[]; // Only for 'select' type
+    options?: string[] | { value: string; label: string }[];
 }
 
 // Define the interface for an AI Tool
@@ -17,6 +18,7 @@ export interface AiTool {
     icon: string;
     description: string;
     beta?: boolean;
+    welcomeMessage?: string;
     disclaimer?: string;
     formFields: FormField[];
 }
@@ -59,7 +61,15 @@ export const allTools: AiTool[] = [
         beta: false,
         disclaimer: 'All assessments should be reviewed for accuracy and appropriateness before use.',
         formFields: [
-            { id: 'type', label: 'Assessment Type', type: 'select', options: ['Multiple Choice Quiz', 'Short Answer Questions', 'Essay Prompt', 'True/False', 'Fill-in-the-Blank'], required: true },
+            {
+                id: 'type', label: 'Assessment Type', type: 'select', options: [
+                    { value: 'Multiple Choice Quiz', label: 'Multiple Choice Quiz' },
+                    { value: 'Short Answer Questions', label: 'Short Answer Questions' },
+                    { value: 'Essay Prompt', label: 'Essay Prompt' },
+                    { value: 'True/False', label: 'True/False' },
+                    { value: 'Fill-in-the-Blank', label: 'Fill-in-the-Blank' }
+                ], required: true
+            },
             { id: 'topic', label: 'Topic/Subject Area', type: 'text', placeholder: 'e.g., Photosynthesis, WWII Key Battles', required: true },
             { id: 'gradeLevel', label: 'Grade Level', type: 'text', placeholder: 'e.g., 8th Grade, College Intro', required: true },
             { id: 'numQuestions', label: 'Number of Questions/Items (Optional)', type: 'text', placeholder: 'e.g., 10, 5 short answers' },
@@ -90,7 +100,14 @@ export const allTools: AiTool[] = [
             { id: 'criteria', label: 'Key Criteria/Rubric Points', type: 'textarea', placeholder: 'e.g., Thesis clarity, use of evidence, calculation accuracy', required: true },
             { id: 'strengths', label: 'Observed Strengths (Optional)', type: 'textarea', placeholder: 'e.g., Good organization, creative ideas' },
             { id: 'weaknesses', label: 'Areas for Improvement', type: 'textarea', placeholder: 'e.g., Needs more supporting details, check punctuation', required: true },
-            { id: 'tone', label: 'Desired Tone (Optional)', type: 'select', options: ['Encouraging', 'Formal', 'Direct', 'Supportive'], placeholder: 'Select feedback tone' }
+            {
+                id: 'tone', label: 'Desired Tone (Optional)', type: 'select', options: [
+                    { value: 'Encouraging', label: 'Encouraging' },
+                    { value: 'Formal', label: 'Formal' },
+                    { value: 'Direct', label: 'Direct' },
+                    { value: 'Supportive', label: 'Supportive' }
+                ], placeholder: 'Select feedback tone'
+            }
         ]
     },
     {

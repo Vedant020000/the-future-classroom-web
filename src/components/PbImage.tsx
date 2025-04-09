@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { getFileUrl } from '@/lib/pocketbase';
+import pb from '@/lib/pocketbase';
 
 interface PbImageProps {
     record: any;
@@ -29,7 +29,7 @@ export default function PbImage({
     useEffect(() => {
         if (record && filename) {
             try {
-                const url = getFileUrl(record, filename);
+                const url = pb.files.getUrl(record, filename);
                 setImageUrl(url);
                 setError(false);
             } catch (err) {

@@ -6,6 +6,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import styles from './page.module.css';
 import pb from '@/lib/pocketbase';
+import PbImage from '@/components/PbImage';
 
 export default function AccountPage() {
     const router = useRouter();
@@ -150,15 +151,18 @@ export default function AccountPage() {
                         <div className={styles.profileLayout}>
                             <div className={styles.avatar}>
                                 {userData?.avatar ? (
-                                    <Image
-                                        src={pb.getFileUrl(userData, userData.avatar)}
+                                    <PbImage
+                                        record={userData}
+                                        filename={userData.avatar}
                                         alt={userData.name || 'User'}
                                         width={96}
                                         height={96}
                                         className={styles.avatarImage}
                                     />
                                 ) : (
-                                    getInitials(userData?.name || 'User')
+                                    <div className={styles.avatarFallback}>
+                                        {getInitials(userData?.name || 'User')}
+                                    </div>
                                 )}
                             </div>
                             <div className={styles.userInfo}>

@@ -70,8 +70,8 @@ export const getFileUrl = (record: any, filename: string): string => {
     try {
         if (!record || !filename) return '';
 
-        // For files stored in PocketBase
-        return `${pbUrl}/api/files/${record.collectionId}/${record.id}/${filename}`;
+        // Use the new API method
+        return pb.files.getUrl(record, filename);
     } catch (error) {
         console.error('Error getting file URL:', error);
         return '';

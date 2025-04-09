@@ -8,6 +8,7 @@ import { useAuth } from '@/lib/AuthContext';
 import { redirect } from 'next/navigation';
 import { allTools, AiTool, FormField } from '@/lib/aiToolsData';
 import PbImage from '@/components/PbImage';
+import { getUserUsage, AiUsageRecord } from '@/lib/aiUsage';
 
 export default function AIAccessPage() {
     const { user, isLoading, isAuthenticated } = useAuth();
@@ -22,6 +23,29 @@ export default function AIAccessPage() {
     const [generatedContent, setGeneratedContent] = useState<string | null>(null);
     const [isGenerating, setIsGenerating] = useState(false);
     const [error, setError] = useState<string | null>(null);
+
+    // --- State for Usage ---
+    const [usageStats, setUsageStats] = useState<AiUsageRecord | null>(null);
+    const [usageLoading, setUsageLoading] = useState(true);
+
+    // --- Load Usage Stats ---
+    useEffect(() => {
+        const loadUsageStats = async () => {
+            if (user?.id) {
+                setUsageLoading(true);
+                try {
+                    const stats = await getUserUsage(user.id);
+                    setUsageStats(stats);
+                } catch (error) {
+                    console.error('Failed to load usage stats:', error);
+                } finally {
+                    setUsageLoading(false);
+                }
+            }
+        };
+
+        loadUsageStats();
+    }, [user]);
 
     // --- Initialize Form State ---
     useEffect(() => {
@@ -98,7 +122,12 @@ export default function AIAccessPage() {
                 let errorMsg = 'API request failed';
                 try {
                     const errorData = await response.json();
-                    errorMsg = errorData.error || `Server responded with status ${response.status}`;
+                    if (response.status === 429) {
+                        // Daily limit reached error
+                        errorMsg = errorData.message || 'You have reached your daily limit of AI queries. Please try again tomorrow.';
+                    } else {
+                        errorMsg = errorData.error || `Server responded with status ${response.status}`;
+                    }
                 } catch (jsonError) {
                     // Handle cases where the response is not valid JSON
                     errorMsg = `Server responded with status ${response.status}`;
@@ -109,9 +138,17 @@ export default function AIAccessPage() {
             const data = await response.json();
             setGeneratedContent(data.generatedText || 'Sorry, I couldn\'t generate a response.');
 
-        } catch (err) {
-            console.error("Error calling generation API:", err);
-            setError(err instanceof Error ? err.message : 'An unknown error occurred');
+            // Update usage stats after successful generation
+            if (data.usage?.queryRecorded && user?.id) {
+                const updatedStats = await getUserUsage(user.id);
+                setUsageStats(updatedStats);
+            }
+        } catch (error) {
+            if (error instanceof Error) {
+                setError(error.message);
+            } else {
+                setError('An unexpected error occurred.');
+            }
         } finally {
             setIsGenerating(false);
         }
@@ -183,18 +220,49 @@ export default function AIAccessPage() {
 
     // --- Render Component ---
     return (
-        <div className={styles.page}>
-            {/* Back to Tools link - positioned absolutely or differently */}
-            <div className={styles.topBar}>
-                <Link href="/ai-tools" className={styles.backButtonStandalone}>
-                    <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path>
-                    </svg>
+        <div className={styles.container}>
+            <div className={styles.header}>
+                <Link href="/ai-access" className={styles.backButton}>
                     Back to Tools
                 </Link>
+
+                {usageStats && (
+                    <div className={styles.usageStatus}>
+                        <span className={styles.usageText}>
+                            Daily Usage: <strong>{usageStats.daily_queries}</strong> / {usageStats.daily_limit} queries
+                        </span>
+                        <div className={styles.usageBar}>
+                            <div
+                                className={styles.usageBarFill}
+                                style={{
+                                    width: `${Math.min(100, (usageStats.daily_queries / usageStats.daily_limit) * 100)}%`,
+                                    backgroundColor: usageStats.daily_queries >= usageStats.daily_limit ? '#ff4d4f' : '#52c41a'
+                                }}
+                            ></div>
+                        </div>
+                    </div>
+                )}
             </div>
 
-            {/* Main Form Content - now takes full width */}
+            {currentTool && (
+                <>
+                    <div className={styles.toolHeader}>
+                        <div className={styles.toolIconLarge}>{currentTool.icon}</div>
+                        <div>
+                            <h1 className={styles.toolTitle}>{currentTool.name}</h1>
+                            <p className={styles.toolSubtitle}>{currentTool.description}</p>
+                        </div>
+                        {currentTool.beta && <span className={styles.betaBadgeLarge}>Beta</span>}
+                    </div>
+
+                    {currentTool.welcomeMessage && (
+                        <div className={styles.welcomeMessage}>
+                            <p>{currentTool.welcomeMessage}</p>
+                        </div>
+                    )}
+                </>
+            )}
+
             <div className={styles.mainContentFullWidth}>
                 {currentTool && (
                     <>
