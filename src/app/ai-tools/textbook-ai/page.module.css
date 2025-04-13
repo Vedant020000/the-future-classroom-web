@@ -1,0 +1,372 @@
+/* src/app/ai-tools/textbook-ai/page.module.css */
+
+.pageContainer {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 1.5rem 2rem;
+    background-color: rgb(var(--card-rgb));
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    font-family: var(--font-sans);
+    color: var(--text-primary);
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.titleContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.icon {
+    font-size: 2rem;
+}
+
+.title {
+    font-size: 2.2rem;
+    font-weight: 600;
+    margin: 0;
+    color: var(--text-primary);
+}
+
+.betaTag {
+    font-size: 0.75rem;
+    font-weight: 600;
+    background-color: rgba(var(--primary-rgb), 0.2);
+    color: rgb(var(--primary-rgb));
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    margin-left: 0.5rem;
+    vertical-align: middle;
+    display: inline-block;
+    line-height: 1.1;
+}
+
+.description {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+}
+
+.disclaimer {
+    font-size: 0.9rem;
+    color: var(--warning-color);
+    background-color: var(--warning-background);
+    border: 1px solid var(--warning-border);
+    padding: 0.75rem 1rem;
+    border-radius: 6px;
+    margin-top: 0;
+    text-align: left;
+}
+
+.errorText {
+    color: var(--error-color);
+    background-color: var(--error-background);
+    padding: 0.8rem 1rem;
+    border-radius: 4px;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    border: 1px solid var(--error-border);
+    flex-grow: 1;
+    /* Allow text to take space */
+}
+
+/* New container for error + dismiss button */
+.errorContainer {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.dismissError {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+    background-color: transparent;
+    border: 1px solid var(--error-color);
+    color: var(--error-color);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.dismissError:hover {
+    background-color: var(--error-background);
+    color: var(--error-color-darker, #5f161f);
+    /* Darker shade for hover */
+}
+
+/* --- Upload Section --- */
+.uploadContainer {
+    margin-top: 2rem;
+    border: 2px dashed var(--border-color);
+    border-radius: 8px;
+    padding: 2rem;
+    text-align: center;
+    background-color: rgba(var(--foreground-rgb), 0.02);
+}
+
+.uploadLabel {
+    cursor: pointer;
+    padding: 0.8rem 1.5rem;
+    border-radius: 6px;
+    background-color: var(--secondary-color);
+    color: white;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+    text-align: center;
+}
+
+.uploadLabel:hover {
+    background-color: var(--secondary-color-dark);
+}
+
+.fileInput {
+    display: none;
+    /* Hide the default input */
+}
+
+.actionButton,
+.sendButton {
+    padding: 0.7rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 500;
+    border-radius: 6px;
+    border: none;
+    background-color: var(--primary-color);
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.2s ease, opacity 0.2s ease;
+}
+
+.actionButton:hover:not(:disabled),
+.sendButton:hover:not(:disabled) {
+    background-color: var(--primary-color-dark);
+}
+
+.actionButton:disabled,
+.sendButton:disabled {
+    background-color: var(--border-color);
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+/* --- Analysis Section --- */
+.analysisSection {
+    padding: 1.5rem;
+    margin-top: 2rem;
+    background-color: var(--background-very-light);
+    border-radius: 8px;
+    position: relative;
+    /* Needed if adding an overlay spinner */
+}
+
+.analysisSection h2 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: var(--primary-color);
+}
+
+.chapterList {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 1.5rem;
+}
+
+.chapterItem {
+    background-color: white;
+    padding: 1rem 1.5rem;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    border-left: 4px solid var(--secondary-color);
+}
+
+.chapterItem strong {
+    display: block;
+    margin-bottom: 0.3rem;
+    font-size: 1.1rem;
+    color: var(--text-primary);
+}
+
+.chapterItem p {
+    margin: 0.2rem 0;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+/* Style for errors within the analysis result list */
+.analysisError {
+    color: var(--error-color);
+    font-style: italic;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+}
+
+/* --- Chat Section --- */
+.chatContainer {
+    display: flex;
+    flex-direction: column;
+    height: 60vh;
+    /* Adjust height as needed */
+    max-height: 700px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    margin-top: 2rem;
+    background-color: white;
+    overflow: hidden;
+}
+
+.chatHistory {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.chatMessage {
+    display: flex;
+    align-items: flex-start;
+    /* Align icon with top of text */
+    gap: 0.8rem;
+    max-width: 85%;
+}
+
+.chatMessage p {
+    margin: 0;
+    padding: 0.8rem 1.2rem;
+    border-radius: 12px;
+    line-height: 1.5;
+    word-wrap: break-word;
+}
+
+.senderIcon {
+    font-size: 1.5rem;
+    padding-top: 0.5rem;
+    /* Align icon better with text */
+}
+
+.user {
+    align-self: flex-end;
+    flex-direction: row-reverse;
+    /* Put icon on the right */
+}
+
+.user p {
+    background-color: var(--primary-color-light);
+    color: var(--primary-color-darker);
+    /* Ensure good contrast */
+    border-bottom-right-radius: 0;
+}
+
+.user .senderIcon {
+    color: var(--primary-color);
+}
+
+.ai {
+    align-self: flex-start;
+}
+
+.ai p {
+    background-color: var(--background-light);
+    color: var(--text-primary);
+    border-bottom-left-radius: 0;
+}
+
+.ai .senderIcon {
+    color: var(--secondary-color);
+}
+
+.suggestionContainer {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1.5rem;
+    border-top: 1px solid var(--border-color-light);
+    background-color: var(--background-very-light);
+    overflow-x: auto;
+    /* Allow horizontal scrolling if needed */
+}
+
+.suggestionIcon {
+    font-size: 1.3rem;
+    color: var(--secondary-color);
+    margin-right: 0.5rem;
+}
+
+.suggestionButton {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+    border: 1px solid var(--secondary-color);
+    background-color: white;
+    color: var(--secondary-color);
+    border-radius: 15px;
+    /* Pill shape */
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    white-space: nowrap;
+}
+
+.suggestionButton:hover {
+    background-color: var(--secondary-color-light);
+    color: var(--secondary-color-dark);
+}
+
+.chatInputArea {
+    display: flex;
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--border-color);
+    background-color: var(--background-light);
+}
+
+.chatInput {
+    flex-grow: 1;
+    padding: 0.8rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 6px 0 0 6px;
+    font-size: 1rem;
+    outline: none;
+}
+
+.chatInput:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px var(--primary-color-light);
+}
+
+.sendButton {
+    border-radius: 0 6px 6px 0;
+}
+
+.loadingText {
+    text-align: center;
+    color: var(--text-secondary);
+    padding: 1rem;
+    font-style: italic;
+}
+
+/* Style the Analyze button specifically if needed */
+.analyzeButton {
+    /* Use primary button styles from globals */
+    /* Add specific overrides if needed */
+    margin-top: 1rem;
+}
+
+/* You might need styles for displaying analysis results, chat, etc. */
+.resultsContainer {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background-color: rgb(var(--background-rgb));
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+}

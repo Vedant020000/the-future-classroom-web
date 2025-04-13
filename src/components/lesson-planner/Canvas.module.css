@@ -1,0 +1,35 @@
+/* src/components/lesson-planner/Canvas.module.css */
+.canvasContainer {
+    background-color: var(--canvas-bg, #ffffff);
+    border: 1px dashed var(--canvas-border-color, #d1d5db);
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    min-height: 60vh;
+    /* Ensure enough space for dropping */
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    transition: background-color 0.2s ease;
+    overflow-y: auto;
+    /* Add scroll if content overflows */
+}
+
+.placeholderText {
+    color: var(--placeholder-text-color, #9ca3af);
+    text-align: center;
+    font-style: italic;
+    margin: auto;
+    /* Center placeholder vertically and horizontally */
+    padding: 2rem;
+}
+
+/* Add CSS variables to globals.css or define defaults here */
+:root {
+    --canvas-bg: #ffffff;
+    --canvas-border-color: #d1d5db;
+    --canvas-drop-hover-bg: #e0f2fe;
+    /* Light blue for active drop */
+    --canvas-can-drop-bg: #f3f4f6;
+    /* Light gray when draggable is over */
+    --placeholder-text-color: #9ca3af;
+}

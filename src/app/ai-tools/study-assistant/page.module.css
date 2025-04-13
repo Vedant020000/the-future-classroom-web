@@ -1,0 +1,46 @@
+/* Placeholder CSS for src/app/ai-tools/study-assistant/page.module.css */
+
+/* You can copy base styles from another tool's CSS module (e.g., assistant/page.module.css) */
+/* Or define specific styles for the Study Assistant page here */
+
+.pageContainer {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 1rem 2rem;
+    /* Inherits background/color from globals */
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.title {
+    font-size: 2.2rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    /* color: var(--primary-color); */
+    /* Use theme variable */
+}
+
+.description {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+}
+
+.disclaimer {
+    font-size: 0.9rem;
+    color: var(--warning-color);
+    background-color: var(--warning-background);
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    margin-top: 1rem;
+    border: 1px solid var(--warning-border);
+}
+
+/* Add other styles as needed */

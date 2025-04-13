@@ -1,0 +1,75 @@
+/* src/components/lesson-planner/LessonBlock.module.css */
+.blockContainer {
+    background-color: var(--block-bg, #ffffff);
+    border: 1px solid var(--block-border-color, #e5e7eb);
+    border-radius: var(--border-radius-small, 6px);
+    padding: 1rem;
+    box-shadow: var(--shadow-sm);
+    /* Add styles for potential drag handle later */
+}
+
+.blockTitle {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--foreground-rgb);
+}
+
+.blockIcon {
+    font-size: 1.2rem;
+}
+
+.blockContent {
+    /* Styles for the content area within the block */
+}
+
+.textarea,
+.input {
+    width: 100%;
+    padding: 0.6rem 0.8rem;
+    border: 1px solid var(--input-border-color, #d1d5db);
+    border-radius: var(--input-border-radius, 4px);
+    font-size: 1rem;
+    background-color: var(--input-bg, #ffffff);
+    color: var(--input-text-color, #111827);
+    transition: border-color 0.2s ease;
+}
+
+.textarea:focus,
+.input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px var(--primary-focus-ring, rgba(59, 130, 246, 0.3));
+}
+
+.textarea {
+    min-height: 80px;
+    resize: vertical;
+    /* Allow vertical resizing */
+}
+
+.resourceInputs {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.resourceDescription {
+    min-height: 50px;
+    /* Smaller height for description */
+}
+
+/* Add CSS variables to globals.css or define defaults */
+:root {
+    --block-bg: #ffffff;
+    --block-border-color: #e5e7eb;
+    --input-border-color: #d1d5db;
+    --input-bg: #ffffff;
+    --input-text-color: #111827;
+    --primary-focus-ring: rgba(59, 130, 246, 0.3);
+    --border-radius-small: 6px;
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}

@@ -9,6 +9,15 @@ import { useAuth } from '@/lib/AuthContext';
 import PostCard from '@/components/community/PostCard';
 import CreatePostForm from '@/components/community/CreatePostForm';
 
+// Temporary placeholder data (remove later)
+const popularTopics = [
+    { name: 'AI in Education', slug: 'ai-in-education' },
+    { name: 'Project Based Learning', slug: 'project-based-learning' },
+    { name: 'Classroom Management', slug: 'classroom-management' },
+    { name: 'EdTech Tools', slug: 'edtech-tools' },
+    { name: 'Differentiation', slug: 'differentiation' },
+];
+
 export default function CommunityPage() {
     const { user } = useAuth();
     const [activeTab, setActiveTab] = useState('trending');
@@ -29,18 +38,20 @@ export default function CommunityPage() {
         setError('');
 
         try {
-            // Apply sorting based on active tab
             let postsFilter = { ...filter };
+            let sortOption = '-created'; // Default: latest
 
             if (activeTab === 'trending') {
-                // For trending, we sort by likes in the backend
-                // This is handled in the sorting option in getCommunityPosts
+                // PocketBase doesn't directly support sorting by computed popularity
+                // We can sort by likes as a proxy, or implement more complex logic later
+                sortOption = '-likes';
             } else if (activeTab === 'following') {
-                // For following, show only posts from users you follow
-                // For now, just show the most recent posts
+                // TODO: Implement logic to filter by followed users
+                // For now, just show latest - handled by default sortOption
+                console.warn("'Following' tab filter not yet implemented.");
             }
 
-            const result = await getCommunityPosts(postsFilter, currentPage, 10);
+            const result = await getCommunityPosts(postsFilter, currentPage, 10, sortOption);
             setPosts(result.posts);
             setTotalPages(result.totalPages);
         } catch (err: any) {
@@ -56,7 +67,7 @@ export default function CommunityPage() {
             ...prev,
             [name]: value === 'all' ? undefined : value
         }));
-        setCurrentPage(1); // Reset to first page on filter change
+        setCurrentPage(1);
     };
 
     const handleFilterApply = () => {
@@ -73,19 +84,20 @@ export default function CommunityPage() {
             ...prev,
             searchTerm: search.trim() ? search : undefined
         }));
-        setCurrentPage(1); // Reset to first page on search
+        setCurrentPage(1);
     };
 
-    const getInitials = (name: string) => {
-        return name
-            .split(' ')
-            .map(part => part.charAt(0))
-            .join('')
-            .toUpperCase();
-    };
+    // TODO: Add pagination controls
 
     return (
         <div className={styles.page}>
+            {/* --- Development Warning --- */}
+            <div className={styles.devWarning}>
+                <p><strong>🚧 Community Feature Under Development 🚧</strong></p>
+                <p>The user interface and full functionality for the community section are still being built. Some features (like filtering, following, topics) may not work as expected yet. Thank you for your patience!</p>
+            </div>
+            {/* --- End Development Warning --- */}
+
             {/* Header */}
             <section className={styles.headerSection}>
                 <div className={styles.container}>
@@ -161,7 +173,7 @@ export default function CommunityPage() {
                         {/* Main Content */}
                         <div className={styles.mainContent}>
                             {/* Create Post */}
-                            <CreatePostForm />
+                            {user && <CreatePostForm onPostCreated={fetchPosts} />}
 
                             {/* Feed Tabs */}
                             <div className={styles.feedContainer}>
@@ -393,15 +405,6 @@ export default function CommunityPage() {
 }
 
 // Sample data
-const popularTopics = [
-    { name: 'AIinEducation', slug: 'ai-in-education' },
-    { name: 'LessonPlanning', slug: 'lesson-planning' },
-    { name: 'STEM', slug: 'stem' },
-    { name: 'ClassroomManagement', slug: 'classroom-management' },
-    { name: 'EdTech', slug: 'edtech' },
-    { name: 'ProfessionalDevelopment', slug: 'professional-development' },
-];
-
 const events = [
     {
         day: '15',

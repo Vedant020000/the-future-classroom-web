@@ -46,9 +46,14 @@ export type PostFilter = {
 };
 
 /**
- * Get all community posts with optional filtering
+ * Get all community posts with optional filtering and sorting
  */
-export async function getCommunityPosts(filter: PostFilter = {}, page = 1, perPage = 20): Promise<{
+export async function getCommunityPosts(
+    filter: PostFilter = {},
+    page = 1,
+    perPage = 20,
+    sort: string = '-created' // Add optional sort parameter
+): Promise<{
     posts: CommunityPost[];
     totalItems: number;
     totalPages: number;
@@ -75,8 +80,10 @@ export async function getCommunityPosts(filter: PostFilter = {}, page = 1, perPa
             if (searchTerm) filterString += `(title ~ "${searchTerm}" || content ~ "${searchTerm}")`;
         }
 
+        console.log(`Fetching posts with filter: '${filterString}', sort: '${sort}'`); // Log filter/sort
+
         const resultList = await pb.collection('community_posts').getList(page, perPage, {
-            sort: '-created',
+            sort: sort, // Use the sort parameter
             filter: filterString || undefined,
             expand: 'user_id',
         });
@@ -88,7 +95,7 @@ export async function getCommunityPosts(filter: PostFilter = {}, page = 1, perPa
             page: resultList.page,
         };
     } catch (error) {
-        console.error('Error fetching community posts:', error);
+        console.error(`Error fetching community posts (filter: '${JSON.stringify(filter)}', sort: '${sort}'):`, error);
         return {
             posts: [],
             totalItems: 0,

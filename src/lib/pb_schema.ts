@@ -230,6 +230,75 @@ export const collections = [
                 }
             }
         ]
+    },
+
+    /**
+     * Lesson Plans Collection
+     * Stores user-created lesson plans
+     */
+    {
+        name: "lesson_plans",
+        schema: [
+            {
+                name: "user_id",
+                type: "relation",
+                required: true,
+                options: {
+                    collectionId: "_pb_users_auth_",
+                    cascadeDelete: true
+                }
+            },
+            {
+                name: "title",
+                type: "text",
+                required: true
+            },
+            {
+                name: "subject",
+                type: "text"
+            },
+            {
+                name: "gradeLevel",
+                type: "text"
+            },
+            {
+                name: "topic",
+                type: "text"
+            },
+            {
+                name: "objectives",
+                type: "text" // Can store as markdown or simple text initially
+            },
+            {
+                name: "duration",
+                type: "text"
+            },
+            {
+                name: "materials",
+                type: "text" // Store as markdown list or JSON? Start with text.
+            },
+            {
+                name: "activities",
+                type: "json" // Store the structured activities/blocks here
+            },
+            {
+                name: "assessment",
+                type: "text" // Store as markdown or simple text
+            },
+            {
+                name: "standards",
+                type: "text" // Store as markdown or comma-separated
+            },
+            {
+                name: "is_public",
+                type: "bool",
+                default: false
+            },
+            {
+                name: "last_generated_content", // Store the last AI generation for reference/editing
+                type: "text"
+            }
+        ]
     }
 ];
 

@@ -1,0 +1,82 @@
+/* src/app/terms/page.module.css */
+
+.pageContainer {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: var(--background-light);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    font-family: var(--font-sans);
+    color: var(--text-primary);
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--primary-color);
+}
+
+.header p {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-bottom: 0;
+}
+
+.contentSection {
+    line-height: 1.7;
+}
+
+.contentSection h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-color-light);
+    color: var(--secondary-color-darker);
+}
+
+.contentSection h2:first-of-type {
+    margin-top: 0;
+}
+
+.contentSection p {
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+}
+
+.contentSection ul {
+    list-style: disc;
+    margin-left: 2rem;
+    margin-bottom: 1rem;
+    padding-left: 1rem;
+}
+
+.contentSection li {
+    margin-bottom: 0.5rem;
+}
+
+/* Using global variables assumed to be defined in globals.css */
+/* If not, uncomment and define here or import globals */
+/*
+:root {
+    --background-light: #f8f9fa;
+    --background-very-light: #ffffff;
+    --text-primary: #343a40;
+    --text-secondary: #6c757d;
+    --primary-color: #007bff;
+    --secondary-color-darker: #343a40;
+    --border-color: #dee2e6;
+    --border-color-light: #e9ecef;
+    --font-sans: system-ui, sans-serif;
+}
+*/

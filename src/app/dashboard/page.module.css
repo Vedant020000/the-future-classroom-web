@@ -1,0 +1,509 @@
+/* Dashboard Page Styles */
+.dashboardContainer {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+/* Loading State */
+.loadingContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    gap: 1rem;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    border-top-color: #3291ff;
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Welcome Section */
+.welcomeSection {
+    margin-bottom: 2rem;
+    background: rgba(29, 36, 52, 0.5);
+    border-radius: 12px;
+    padding: 1.5rem 2rem;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.welcomeContent {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 2rem;
+}
+
+.userProfile {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+}
+
+.welcomeHeading {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin: 0 0 0.25rem 0;
+}
+
+.avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background-color: #3291ff;
+    color: white;
+    font-weight: bold;
+    font-size: 1.5rem;
+    overflow: hidden;
+    border: 3px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.avatarImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.avatarFallback {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+.todayDate {
+    font-size: 1rem;
+    color: #a1a1aa;
+    margin: 0;
+}
+
+/* Stats Overview */
+.statsOverview {
+    display: flex;
+    gap: 1rem;
+}
+
+.statCard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 1rem;
+    min-width: 100px;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.statNumber {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 0.25rem;
+}
+
+.statLabel {
+    font-size: 0.875rem;
+    color: #a1a1aa;
+}
+
+/* Section Container */
+.sectionContainer {
+    margin-bottom: 2rem;
+}
+
+.sectionHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.25rem;
+}
+
+.sectionTitle {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.viewAllLink {
+    font-size: 0.875rem;
+    color: #3291ff;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.viewAllLink:hover {
+    color: #60a5fa;
+    text-decoration: underline;
+}
+
+/* AI Tools Section */
+.toolsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.toolCard {
+    background: rgba(29, 36, 52, 0.5);
+    border-radius: 10px;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+    text-decoration: none;
+    color: inherit;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    height: 100%;
+}
+
+.toolCard:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.toolIcon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.toolName {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.toolDescription {
+    font-size: 0.875rem;
+    color: #a1a1aa;
+    margin: 0;
+}
+
+/* Dashboard Layout */
+.dashboardLayout {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 1.5rem;
+}
+
+.mainColumn {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.sideColumn {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* Dashboard Cards */
+.dashboardCard {
+    background: rgba(29, 36, 52, 0.5);
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.cardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.cardHeader h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.cardContent {
+    padding: 1.25rem 1.5rem;
+    flex-grow: 1;
+}
+
+/* Lesson Plans List */
+.lessonList,
+.assignmentList,
+.announcementList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.lessonItem {
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    transition: background-color 0.2s;
+    margin-bottom: 0.5rem;
+}
+
+.lessonItem:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.lessonItem a {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-decoration: none;
+    color: inherit;
+}
+
+.lessonTitle {
+    font-weight: 500;
+}
+
+.lessonDate {
+    font-size: 0.875rem;
+    color: #a1a1aa;
+}
+
+/* Assignment Items */
+.assignmentItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    transition: background-color 0.2s;
+    margin-bottom: 0.5rem;
+}
+
+.assignmentItem:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.assignmentInfo {
+    display: flex;
+    flex-direction: column;
+}
+
+.assignmentTitle {
+    font-weight: 500;
+}
+
+.assignmentSubject {
+    font-size: 0.875rem;
+    color: #a1a1aa;
+}
+
+.assignmentDue {
+    font-size: 0.875rem;
+    color: #ff4d4f;
+    font-weight: 500;
+}
+
+/* Progress Chart */
+.progressChart {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.progressCircle {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.progressFill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 50%;
+}
+
+.progressInner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background-color: rgba(29, 36, 52, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.progressPercent {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #fff;
+}
+
+.progressLegend {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+}
+
+.progressLegendItem {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.legendDot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+/* Announcement Items */
+.announcementItem {
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    transition: background-color 0.2s;
+    margin-bottom: 0.75rem;
+}
+
+.announcementItem:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.announcementHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.announcementTitle {
+    font-weight: 500;
+}
+
+.announcementDate {
+    font-size: 0.875rem;
+    color: #a1a1aa;
+}
+
+.announcementContent {
+    font-size: 0.875rem;
+    margin: 0;
+    color: #e4e4e7;
+}
+
+/* Empty State */
+.emptyState {
+    text-align: center;
+    color: #a1a1aa;
+    padding: 2rem 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.emptyStateIcon {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.emptyStateButton {
+    background-color: #3291ff;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background-color 0.2s;
+    margin-top: 0.5rem;
+}
+
+.emptyStateButton:hover {
+    background-color: #2563eb;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .dashboardLayout {
+        grid-template-columns: 1fr;
+    }
+
+    .toolsGrid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .welcomeContent {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .statsOverview {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .userProfile {
+        width: 100%;
+    }
+}
+
+@media (max-width: 640px) {
+    .toolsGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .statsOverview {
+        flex-wrap: wrap;
+    }
+
+    .statCard {
+        min-width: 45%;
+    }
+}

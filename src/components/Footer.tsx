@@ -70,6 +70,9 @@ export default function Footer() {
                         <Link href="/terms" style={{ color: 'rgba(var(--foreground-rgb), 0.6)', fontSize: '0.875rem', textDecoration: 'none' }}>
                             Terms of Service
                         </Link>
+                        <Link href="/links" style={{ color: 'rgba(var(--foreground-rgb), 0.6)', fontSize: '0.875rem', textDecoration: 'none' }}>
+                            Links
+                        </Link>
                     </div>
                 </div>
             </div>

@@ -1,0 +1,83 @@
+/* Placeholder CSS for src/app/ai-tools/iep-assistant/page.module.css */
+/* Copied from assistant */
+
+.pageContainer {
+    max-width: 900px;
+    /* Adjusted width */
+    margin: 2rem auto;
+    padding: 1.5rem 2rem;
+    background-color: rgb(var(--card-rgb));
+    /* Use card background */
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    font-family: var(--font-sans);
+    color: var(--text-primary);
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.titleContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.icon {
+    font-size: 2rem;
+    /* Adjust as needed */
+}
+
+.title {
+    font-size: 2.2rem;
+    font-weight: 600;
+    margin: 0;
+    color: var(--text-primary);
+}
+
+.betaTag {
+    /* Use the global nav badge style or define a specific one */
+    font-size: 0.75rem;
+    /* Slightly smaller */
+    font-weight: 600;
+    background-color: rgba(var(--primary-rgb), 0.2);
+    color: rgb(var(--primary-rgb));
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    margin-left: 0.5rem;
+    vertical-align: middle;
+    display: inline-block;
+    line-height: 1.1;
+}
+
+.description {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+    /* Add some space before disclaimer */
+}
+
+.disclaimer {
+    font-size: 0.9rem;
+    color: var(--warning-color);
+    background-color: var(--warning-background);
+    border: 1px solid var(--warning-border);
+    padding: 0.75rem 1rem;
+    border-radius: 6px;
+    margin-top: 0;
+    /* Reset margin if description has bottom margin */
+    text-align: left;
+    /* Align text left */
+}
+
+/* Form container */
+.formContainer {
+    margin-top: 2rem;
+}

@@ -6,7 +6,11 @@ import { createCommunityPost } from '@/lib/communityService';
 import { useAuth } from '@/lib/AuthContext';
 import styles from '@/app/community/page.module.css';
 
-export default function CreatePostForm() {
+interface CreatePostFormProps {
+    onPostCreated: () => void; // Define the callback prop type
+}
+
+export default function CreatePostForm({ onPostCreated }: CreatePostFormProps) { // Add prop to component signature
     const { user } = useAuth();
     const router = useRouter();
     const [isExpanded, setIsExpanded] = useState(false);
@@ -82,7 +86,8 @@ export default function CreatePostForm() {
                 });
                 setAttachments([]);
                 setIsExpanded(false);
-                router.refresh(); // Refresh the page to show the new post
+                // router.refresh(); // Refresh the page to show the new post - Replaced by callback
+                onPostCreated(); // Call the callback function to trigger refresh in parent
             } else {
                 setError('Failed to create post. Please try again.');
             }

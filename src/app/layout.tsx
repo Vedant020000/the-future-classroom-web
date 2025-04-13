@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+// import Navbar from "@/components/Navbar"; // No longer needed here
+// import Footer from "@/components/Footer"; // No longer needed here
 import { AuthProvider } from "@/lib/AuthContext";
+import MainLayout from "@/components/layout/MainLayout"; // Import the new layout component
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,20 +20,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body style={{
-        fontFamily: inter.style.fontFamily,
-        background: 'rgb(0, 0, 0)',
-        color: 'rgb(255, 255, 255)',
-        minHeight: '100vh',
-        display: 'flex',
-        flexDirection: 'column'
-      }}>
+      {/* Apply flex direction to body or a wrapper if needed for footer positioning */}
+      <body style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
         <AuthProvider>
-          <Navbar />
-          <main style={{ flexGrow: 1 }}>
-            {children}
-          </main>
-          <Footer />
+          {/* Render MainLayout which handles Navbar, main, and conditional Footer */}
+          <MainLayout>{children}</MainLayout>
         </AuthProvider>
       </body>
     </html>

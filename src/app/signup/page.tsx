@@ -3,10 +3,13 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import pb from '@/lib/pocketbase'; // Import PocketBase instance
+import { useAuth } from '@/lib/AuthContext'; // Import AuthContext
 // import './globals.css';
 
 export default function SignupPage() {
     const router = useRouter();
+    const { refresh } = useAuth(); // Get refresh function from context
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
@@ -15,7 +18,8 @@ export default function SignupPage() {
         confirmPassword: '',
         role: 'teacher',
         schoolName: '',
-        agreeTerms: false
+        agreeTerms: false,
+        name: '' // Add name field for PocketBase default collection
     });
     const [isLoading, setIsLoading] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});
@@ -26,14 +30,18 @@ export default function SignupPage() {
 
         setFormData(prev => ({
             ...prev,
-            [name]: type === 'checkbox' ? checked : value
+            [name]: type === 'checkbox' ? checked : value,
+            // Automatically update the 'name' field for PocketBase
+            ...(name === 'firstName' && { name: `${value} ${prev.lastName}` }),
+            ...(name === 'lastName' && { name: `${prev.firstName} ${value}` }),
         }));
 
         // Clear error when field is edited
-        if (errors[name]) {
+        if (errors[name] || errors.form) {
             setErrors(prev => {
                 const newErrors = { ...prev };
                 delete newErrors[name];
+                delete newErrors.form; // Clear form error on any change
                 return newErrors;
             });
         }
@@ -80,23 +88,56 @@ export default function SignupPage() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-
         if (!validateForm()) {
             return;
         }
-
         setIsLoading(true);
 
         try {
-            // In a real app, this would be a fetch call to your registration API
-            await new Promise(resolve => setTimeout(resolve, 1500));
+            // Prepare data for PocketBase
+            const dataToSubmit = {
+                email: formData.email,
+                password: formData.password,
+                passwordConfirm: formData.confirmPassword,
+                name: formData.name.trim(), // Required by default PocketBase users collection
+                // Add any other custom fields you have in your PocketBase 'users' collection
+                firstName: formData.firstName,
+                lastName: formData.lastName,
+                role: formData.role,
+                schoolName: formData.schoolName,
+                // You might store 'agreeTerms' differently or just use it for validation
+            };
 
-            // Simulate successful registration and redirect
-            router.push('/login?registered=true');
-        } catch (err) {
-            setErrors({
-                form: 'Registration failed. Please try again later.'
-            });
+            console.log("Submitting data to PocketBase:", dataToSubmit);
+
+            // Call PocketBase create user
+            const newUser = await pb.collection('users').create(dataToSubmit);
+
+            console.log("Signup successful:", newUser);
+
+            // Optional: Attempt to log the user in immediately after signup
+            // This might require email verification depending on your PocketBase settings
+            try {
+                await pb.collection('users').authWithPassword(formData.email, formData.password);
+                await refresh(); // Refresh auth state
+                console.log("Auto-login after signup successful.");
+                router.push('/dashboard'); // Redirect to dashboard after successful login
+            } catch (authError) {
+                console.warn("Auto-login after signup failed (maybe verification needed?):", authError);
+                // Redirect to login page with a success message, prompting verification if needed
+                router.push('/login?registered=true');
+            }
+
+        } catch (err: any) {
+            console.error("PocketBase signup error:", err);
+            let errorMessage = 'Registration failed. Please try again later.';
+            if (err?.data?.data?.email?.message) {
+                // Example: Extract specific PocketBase validation error
+                errorMessage = `Registration failed: ${err.data.data.email.message}`;
+            } else if (err.message) {
+                errorMessage = `Registration failed: ${err.message}`;
+            }
+            setErrors({ form: errorMessage });
         } finally {
             setIsLoading(false);
         }
@@ -136,6 +177,7 @@ export default function SignupPage() {
                                         onChange={handleChange}
                                         className={`w-full px-4 py-3 rounded-lg bg-card border ${errors.firstName ? 'border-red-500' : 'border-border/40'} focus:outline-none focus:ring-2 focus:ring-primary/30`}
                                         placeholder="John"
+                                        disabled={isLoading}
                                     />
                                     {errors.firstName && (
                                         <p className="mt-1 text-sm text-red-500">{errors.firstName}</p>
@@ -154,6 +196,7 @@ export default function SignupPage() {
                                         onChange={handleChange}
                                         className={`w-full px-4 py-3 rounded-lg bg-card border ${errors.lastName ? 'border-red-500' : 'border-border/40'} focus:outline-none focus:ring-2 focus:ring-primary/30`}
                                         placeholder="Doe"
+                                        disabled={isLoading}
                                     />
                                     {errors.lastName && (
                                         <p className="mt-1 text-sm text-red-500">{errors.lastName}</p>
@@ -173,6 +216,7 @@ export default function SignupPage() {
                                     onChange={handleChange}
                                     className={`w-full px-4 py-3 rounded-lg bg-card border ${errors.email ? 'border-red-500' : 'border-border/40'} focus:outline-none focus:ring-2 focus:ring-primary/30`}
                                     placeholder="you@school.edu"
+                                    disabled={isLoading}
                                 />
                                 {errors.email && (
                                     <p className="mt-1 text-sm text-red-500">{errors.email}</p>
@@ -192,6 +236,7 @@ export default function SignupPage() {
                                         onChange={handleChange}
                                         className={`w-full px-4 py-3 rounded-lg bg-card border ${errors.password ? 'border-red-500' : 'border-border/40'} focus:outline-none focus:ring-2 focus:ring-primary/30`}
                                         placeholder="••••••••"
+                                        disabled={isLoading}
                                     />
                                     {errors.password && (
                                         <p className="mt-1 text-sm text-red-500">{errors.password}</p>
@@ -210,6 +255,7 @@ export default function SignupPage() {
                                         onChange={handleChange}
                                         className={`w-full px-4 py-3 rounded-lg bg-card border ${errors.confirmPassword ? 'border-red-500' : 'border-border/40'} focus:outline-none focus:ring-2 focus:ring-primary/30`}
                                         placeholder="••••••••"
+                                        disabled={isLoading}
                                     />
                                     {errors.confirmPassword && (
                                         <p className="mt-1 text-sm text-red-500">{errors.confirmPassword}</p>
@@ -227,6 +273,7 @@ export default function SignupPage() {
                                     value={formData.role}
                                     onChange={handleChange}
                                     className="w-full px-4 py-3 rounded-lg bg-card border border-border/40 focus:outline-none focus:ring-2 focus:ring-primary/30"
+                                    disabled={isLoading}
                                 >
                                     <option value="teacher">Teacher</option>
                                     <option value="administrator">School Administrator</option>
@@ -247,67 +294,56 @@ export default function SignupPage() {
                                     onChange={handleChange}
                                     className={`w-full px-4 py-3 rounded-lg bg-card border ${errors.schoolName ? 'border-red-500' : 'border-border/40'} focus:outline-none focus:ring-2 focus:ring-primary/30`}
                                     placeholder="Westview High School"
+                                    disabled={isLoading}
                                 />
                                 {errors.schoolName && (
                                     <p className="mt-1 text-sm text-red-500">{errors.schoolName}</p>
                                 )}
                             </div>
 
-                            <div className="flex items-start">
-                                <div className="flex items-center h-5">
-                                    <input
-                                        id="agreeTerms"
-                                        name="agreeTerms"
-                                        type="checkbox"
-                                        checked={formData.agreeTerms}
-                                        onChange={handleChange}
-                                        className={`w-4 h-4 text-primary focus:ring-primary/30 border-border/40 rounded ${errors.agreeTerms ? 'border-red-500' : ''}`}
-                                    />
-                                </div>
-                                <div className="ml-3 text-sm">
-                                    <label htmlFor="agreeTerms" className={`font-medium ${errors.agreeTerms ? 'text-red-500' : ''}`}>
-                                        I agree to the
-                                        <Link href="/terms" className="text-primary hover:text-primary-dark ml-1">
-                                            Terms of Service
-                                        </Link>
-                                        {' '}and{' '}
-                                        <Link href="/privacy" className="text-primary hover:text-primary-dark">
-                                            Privacy Policy
-                                        </Link>
-                                    </label>
-                                    {errors.agreeTerms && (
-                                        <p className="mt-1 text-sm text-red-500">{errors.agreeTerms}</p>
-                                    )}
-                                </div>
+                            <div className="flex items-center">
+                                <input
+                                    id="agreeTerms"
+                                    name="agreeTerms"
+                                    type="checkbox"
+                                    checked={formData.agreeTerms}
+                                    onChange={handleChange}
+                                    className={`h-4 w-4 rounded border-border/60 text-primary focus:ring-primary/50 ${errors.agreeTerms ? 'border-red-500' : ''}`}
+                                    disabled={isLoading}
+                                />
+                                <label htmlFor="agreeTerms" className="ml-2 block text-sm text-foreground/80">
+                                    I agree to the
+                                    <Link href="/terms" className="ml-1 font-medium text-primary hover:underline">Terms and Conditions</Link>
+                                    and
+                                    <Link href="/privacy" className="ml-1 font-medium text-primary hover:underline">Privacy Policy</Link>.
+                                </label>
                             </div>
+                            {errors.agreeTerms && (
+                                <p className="mt-1 text-sm text-red-500">{errors.agreeTerms}</p>
+                            )}
 
-                            <button
-                                type="submit"
-                                disabled={isLoading}
-                                className="w-full btn-primary flex justify-center"
-                            >
-                                {isLoading ? (
-                                    <>
+                            <div>
+                                <button
+                                    type="submit"
+                                    disabled={isLoading}
+                                    className="w-full btn btnPrimary py-3 px-4 text-base transition duration-300 ease-in-out hover:scale-[1.02] disabled:opacity-60 disabled:pointer-events-none"
+                                >
+                                    {isLoading ? (
                                         <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                         </svg>
-                                        Creating your account...
-                                    </>
-                                ) : 'Create Account'}
-                            </button>
+                                    ) : null}
+                                    {isLoading ? 'Creating Account...' : 'Create Account'}
+                                </button>
+                            </div>
                         </form>
 
-                        <div className="mt-8 pt-6 border-t border-border/40 text-center">
-                            <p className="text-sm text-foreground/70">
-                                Already have an account?{' '}
-                                <Link
-                                    href="/login"
-                                    className="text-primary hover:text-primary-dark transition-colors font-medium"
-                                >
-                                    Sign in
-                                </Link>
-                            </p>
+                        <div className="mt-8 text-center text-sm text-foreground/70">
+                            Already have an account?
+                            <Link href="/login" className="ml-1 font-medium text-primary hover:underline">
+                                Sign In
+                            </Link>
                         </div>
                     </div>
                 </div>

@@ -1,0 +1,106 @@
+/* src/app/links/page.module.css */
+
+.pageContainer {
+    max-width: 700px;
+    /* Narrower for a links page */
+    margin: 2rem auto;
+    padding: 2rem;
+    font-family: var(--font-sans);
+    color: var(--text-primary);
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--primary-color);
+}
+
+.header p {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    margin-bottom: 0;
+}
+
+.linksGrid {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.linkCard {
+    display: flex;
+    align-items: center;
+    padding: 1.25rem 1.5rem;
+    border-radius: 8px;
+    background-color: var(--card-rgb, #1f2937);
+    /* Use card variable or fallback */
+    border: 1px solid var(--border-color, #4b5563);
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    text-decoration: none;
+    color: inherit;
+}
+
+.linkCard:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    border-color: var(--primary-color);
+}
+
+.linkIcon {
+    font-size: 2rem;
+    /* Adjust icon size */
+    margin-right: 1.5rem;
+    flex-shrink: 0;
+    width: 40px;
+    /* Fixed width */
+    text-align: center;
+}
+
+.linkContent {
+    flex-grow: 1;
+}
+
+.linkName {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    color: var(--foreground-rgb);
+}
+
+.linkDescription {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin: 0;
+    line-height: 1.4;
+}
+
+.arrow {
+    font-size: 1.5rem;
+    color: var(--text-secondary);
+    transition: transform 0.2s ease-in-out, color 0.2s ease-in-out;
+    margin-left: 1rem;
+}
+
+.linkCard:hover .arrow {
+    transform: translateX(5px);
+    color: var(--primary-color);
+}
+
+/* Base variables if needed */
+:root {
+    --foreground-rgb: 255, 255, 255;
+    --text-primary: #e5e7eb;
+    /* Lighter text for dark bg */
+    --text-secondary: #9ca3af;
+    --primary-color: #3b82f6;
+    /* Adjust colors for theme */
+    --card-rgb: 31, 41, 55;
+    /* Darker card */
+    --border-color: #4b5563;
+    --font-sans: system-ui, sans-serif;
+}

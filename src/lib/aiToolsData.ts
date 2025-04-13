@@ -4,7 +4,7 @@
 export interface FormField {
     id: string;
     label: string;
-    type: 'text' | 'textarea' | 'select' | 'number' | 'checkbox';
+    type: 'text' | 'textarea' | 'select' | 'number' | 'checkbox' | 'file';
     placeholder?: string;
     helperText?: string;
     required?: boolean;
@@ -136,6 +136,25 @@ export const allTools: AiTool[] = [
             { id: 'goalFocus', label: 'Specific Skill/Behavior Focus', type: 'textarea', placeholder: 'e.g., Identifying main idea, Adding double-digit numbers, Initiating peer interactions', required: true },
             { id: 'timeframe', label: 'Timeframe (Optional)', type: 'text', placeholder: 'e.g., By the end of the school year, Within 9 weeks' },
             { id: 'measurement', label: 'How Goal Will Be Measured (Optional)', type: 'textarea', placeholder: 'e.g., Teacher observation, Work samples, % accuracy on probes' },
+        ]
+    },
+    {
+        id: 'textbook-ai',
+        name: 'Textbook AI Analyzer & Chatbot',
+        icon: '📚',
+        description: 'Analyze a textbook PDF to get chapter outlines, time estimates, and chat with the content.',
+        beta: true, // Mark as beta initially
+        disclaimer: 'AI analysis provides estimates. Always review content and consult curriculum guidelines. Ensure you have rights to upload and analyze the textbook.',
+        formFields: [
+            {
+                id: 'textbookUpload',
+                label: 'Upload Textbook (PDF)',
+                type: 'file', // Representing a file input conceptually
+                required: true,
+                helperText: 'Upload the textbook PDF for analysis.'
+                // We might add accept="application/pdf" later in the actual input element
+            }
+            // Add more fields later if needed, e.g., specifying grade level for time estimation context
         ]
     },
 ]; 
